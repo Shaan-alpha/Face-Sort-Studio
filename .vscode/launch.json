@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Face Sort Studio",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/run.py",
+            "cwd": "${workspaceFolder}",
+            "env": { "FACE_SORT_DEBUG": "1" },
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}

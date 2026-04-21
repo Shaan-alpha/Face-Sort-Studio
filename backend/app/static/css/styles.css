@@ -1,0 +1,306 @@
+/* ═══════════════════════════════════════════════════════════════
+   Face Sort Studio — Apple-Inspired Design System
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Animations ─────────────────────────────────────────────── */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+@keyframes pulse-ring {
+    0%   { transform: scale(0.95); opacity: 0.7; }
+    70%  { transform: scale(1.05); opacity: 0; }
+    100% { transform: scale(1.05); opacity: 0; }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.35s ease-out both;
+}
+
+.animate-slideUp {
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── Card component ─────────────────────────────────────────── */
+.card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.04);
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07), 0 8px 24px rgba(0,0,0,0.05);
+}
+
+/* ── Tab buttons ────────────────────────────────────────────── */
+.tab-btn {
+    color: #8E8E93;
+    background: transparent;
+}
+
+.tab-btn.active {
+    color: #007AFF;
+    background: rgba(0, 122, 255, 0.08);
+}
+
+.tab-btn:hover:not(.active) {
+    color: #636366;
+    background: rgba(0,0,0,0.03);
+}
+
+/* ── Segmented control buttons ──────────────────────────────── */
+.match-mode-btn,
+.gallery-mode-btn {
+    color: #8E8E93;
+    background: transparent;
+}
+
+.match-mode-btn.active,
+.gallery-mode-btn.active {
+    color: #1C1C1E;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+}
+
+/* ── Drop zones ─────────────────────────────────────────────── */
+.drop-zone.dragover {
+    border-color: #007AFF !important;
+    background: rgba(0, 122, 255, 0.04) !important;
+}
+
+/* ── Image preview thumbnails ───────────────────────────────── */
+.thumb-container {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #F2F2F7;
+}
+
+.thumb-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.2s ease;
+}
+
+.thumb-container:hover img {
+    transform: scale(1.05);
+}
+
+.thumb-remove {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+    color: #fff;
+    font-size: 12px;
+    line-height: 20px;
+    text-align: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.thumb-container:hover .thumb-remove {
+    opacity: 1;
+}
+
+/* ── Range slider ───────────────────────────────────────────── */
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: box-shadow 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.08);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    border: none;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05);
+    cursor: pointer;
+}
+
+/* ── Stat card ──────────────────────────────────────────────── */
+.stat-card {
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-card .stat-number {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+.stat-card .stat-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.7;
+    margin-top: 0.35rem;
+}
+
+/* ── History row ────────────────────────────────────────────── */
+.history-row {
+    background: #fff;
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+    border: 1px solid rgba(0,0,0,0.04);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    transition: all 0.2s ease;
+    cursor: default;
+}
+
+.history-row:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+/* ── Status badges ──────────────────────────────────────────── */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.badge-completed {
+    background: rgba(52, 199, 89, 0.1);
+    color: #34C759;
+}
+
+.badge-processing {
+    background: rgba(255, 149, 0, 0.1);
+    color: #FF9500;
+}
+
+.badge-failed {
+    background: rgba(255, 59, 48, 0.1);
+    color: #FF3B30;
+}
+
+.badge-queued {
+    background: rgba(142, 142, 147, 0.1);
+    color: #8E8E93;
+}
+
+/* ── Progress log ───────────────────────────────────────────── */
+#progress-log::-webkit-scrollbar {
+    width: 4px;
+}
+
+#progress-log::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#progress-log::-webkit-scrollbar-thumb {
+    background: #D1D1D6;
+    border-radius: 4px;
+}
+
+.log-line {
+    padding: 2px 0;
+    animation: fadeIn 0.2s ease-out both;
+}
+
+.log-line.success {
+    color: #34C759;
+}
+
+.log-line.error {
+    color: #FF3B30;
+}
+
+/* ── Dashboard cards ────────────────────────────────────────── */
+.dash-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.04);
+    transition: all 0.25s ease;
+}
+
+.dash-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.dash-card .dash-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+}
+
+.dash-card .dash-value {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+}
+
+.dash-card .dash-label {
+    font-size: 0.75rem;
+    color: #8E8E93;
+    margin-top: 0.25rem;
+}
+
+/* ── Responsive tweaks ──────────────────────────────────────── */
+@media (max-width: 640px) {
+    .card {
+        padding: 1rem 1.15rem;
+        border-radius: 14px;
+    }
+
+    nav h1 {
+        font-size: 1rem;
+    }
+
+    .stat-card .stat-number {
+        font-size: 1.35rem;
+    }
+}

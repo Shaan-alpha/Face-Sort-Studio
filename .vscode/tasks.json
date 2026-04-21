@@ -1,0 +1,31 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Face Sort Studio: Setup",
+            "type": "shell",
+            "command": "powershell",
+            "args": ["-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}\\scripts\\setup.ps1"],
+            "group": "build",
+            "presentation": { "reveal": "always", "panel": "new" }
+        },
+        {
+            "label": "Face Sort Studio: Run",
+            "type": "shell",
+            "command": "python",
+            "args": ["run.py"],
+            "group": "build",
+            "presentation": { "reveal": "always", "panel": "new" },
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "Face Sort Studio: Test",
+            "type": "shell",
+            "command": "python",
+            "args": ["-m", "pytest", "tests/", "-v"],
+            "group": "test",
+            "presentation": { "reveal": "always", "panel": "new" }
+        }
+    ]
+}

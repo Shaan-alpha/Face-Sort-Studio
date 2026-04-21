@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Face Sort Studio</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['"SF Pro Display"', '"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
+                        body: ['"SF Pro Text"', '"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
+                    },
+                    colors: {
+                        apple: {
+                            blue: '#007AFF',
+                            indigo: '#5856D6',
+                            purple: '#AF52DE',
+                            pink: '#FF2D55',
+                            red: '#FF3B30',
+                            orange: '#FF9500',
+                            yellow: '#FFCC00',
+                            green: '#34C759',
+                            teal: '#5AC8FA',
+                            gray: {
+                                50: '#F9FAFB',
+                                100: '#F2F2F7',
+                                200: '#E5E5EA',
+                                300: '#D1D1D6',
+                                400: '#AEAEB2',
+                                500: '#8E8E93',
+                                600: '#636366',
+                                700: '#48484A',
+                                800: '#2C2C2E',
+                                900: '#1C1C1E',
+                            }
+                        }
+                    },
+                    borderRadius: {
+                        'apple': '12px',
+                        'apple-lg': '16px',
+                        'apple-xl': '20px',
+                    },
+                    boxShadow: {
+                        'apple': '0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05)',
+                        'apple-md': '0 2px 8px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06)',
+                        'apple-lg': '0 4px 16px rgba(0,0,0,0.1), 0 12px 40px rgba(0,0,0,0.08)',
+                        'apple-hover': '0 6px 20px rgba(0,0,0,0.12), 0 16px 48px rgba(0,0,0,0.1)',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+</head>
+
+<body class="bg-apple-gray-100 font-body text-apple-gray-900 min-h-screen antialiased">
+
+    <!-- ═══════════════════ NAVIGATION ═══════════════════ -->
+    <nav class="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-apple-gray-200/60">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-14">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-apple-blue to-apple-indigo flex items-center justify-center shadow-apple">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                    </div>
+                    <h1 class="text-lg font-semibold font-display tracking-tight">Face Sort Studio</h1>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="showTab('create')" id="tab-create" class="tab-btn active px-4 py-1.5 text-sm font-medium rounded-full transition-all">New Job</button>
+                    <button onclick="showTab('history')" id="tab-history" class="tab-btn px-4 py-1.5 text-sm font-medium rounded-full transition-all">History</button>
+                    <button onclick="showTab('dashboard')" id="tab-dashboard" class="tab-btn px-4 py-1.5 text-sm font-medium rounded-full transition-all">Dashboard</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ═══════════════════ MAIN CONTENT ═══════════════════ -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- ──── NEW JOB TAB ──── -->
+        <section id="panel-create" class="tab-panel animate-fadeIn">
+
+            <!-- Hero / intro -->
+            <div class="text-center mb-10">
+                <h2 class="text-3xl sm:text-4xl font-display font-bold tracking-tight mb-3 bg-gradient-to-r from-apple-blue to-apple-indigo bg-clip-text text-transparent">
+                    Sort your photos by face
+                </h2>
+                <p class="text-apple-gray-500 text-base max-w-lg mx-auto leading-relaxed">
+                    Upload reference photos of the people you're looking for, then point the app at your gallery. Deep learning does the rest.
+                </p>
+                {% if public_share_mode %}
+                <div class="mt-4 inline-flex items-center gap-2 rounded-full bg-apple-orange/10 px-4 py-2 text-sm text-apple-orange">
+                    <span class="font-semibold">Shared mode</span>
+                    <span>Visitors must upload gallery images. Local folder access is disabled.</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <form id="job-form" class="space-y-6 max-w-2xl mx-auto">
+
+                <!-- Card: Reference Photos -->
+                <div class="card">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-9 h-9 rounded-full bg-apple-blue/10 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-apple-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-base">Reference Photos</h3>
+                            <p class="text-apple-gray-500 text-xs">Photos of people to find</p>
+                        </div>
+                    </div>
+                    <div id="ref-drop"
+                         class="drop-zone group relative border-2 border-dashed border-apple-gray-200 rounded-apple-lg p-8 text-center cursor-pointer transition-all hover:border-apple-blue/40 hover:bg-apple-blue/[0.02]">
+                        <input type="file" id="ref-input" multiple accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                        <div class="pointer-events-none">
+                            <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-apple-gray-100 flex items-center justify-center group-hover:bg-apple-blue/10 transition-colors">
+                                <svg class="w-6 h-6 text-apple-gray-400 group-hover:text-apple-blue transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            </div>
+                            <p class="text-sm text-apple-gray-500">Drop reference photos here or <span class="text-apple-blue font-medium">browse</span></p>
+                            <p class="text-xs text-apple-gray-400 mt-1">JPG, PNG, WebP, BMP, TIFF</p>
+                        </div>
+                    </div>
+                    <div id="ref-preview" class="grid grid-cols-4 sm:grid-cols-6 gap-2 mt-3 hidden"></div>
+                </div>
+
+                <!-- Card: Gallery Source -->
+                <div class="card">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-9 h-9 rounded-full bg-apple-indigo/10 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-apple-indigo" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-base">Gallery Source</h3>
+                            <p class="text-apple-gray-500 text-xs">Photos to scan and sort</p>
+                        </div>
+                    </div>
+
+                    <!-- Toggle: upload vs folder -->
+                    <div class="flex bg-apple-gray-100 rounded-lg p-0.5 mb-4">
+                        <button type="button" onclick="setGalleryMode('upload')" id="gal-mode-upload"
+                                class="gallery-mode-btn flex-1 text-sm font-medium py-2 rounded-md transition-all active">
+                            Upload Photos
+                        </button>
+                        {% if not public_share_mode %}
+                        <button type="button" onclick="setGalleryMode('folder')" id="gal-mode-folder"
+                                class="gallery-mode-btn flex-1 text-sm font-medium py-2 rounded-md transition-all">
+                            Local Folder
+                        </button>
+                        {% endif %}
+                    </div>
+
+                    <div id="gallery-upload-area">
+                        <div id="gal-drop"
+                             class="drop-zone group relative border-2 border-dashed border-apple-gray-200 rounded-apple-lg p-8 text-center cursor-pointer transition-all hover:border-apple-indigo/40 hover:bg-apple-indigo/[0.02]">
+                            <input type="file" id="gal-input" multiple accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                            <div class="pointer-events-none">
+                                <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-apple-gray-100 flex items-center justify-center group-hover:bg-apple-indigo/10 transition-colors">
+                                    <svg class="w-6 h-6 text-apple-gray-400 group-hover:text-apple-indigo transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                                </div>
+                                <p class="text-sm text-apple-gray-500">Drop gallery photos here or <span class="text-apple-indigo font-medium">browse</span></p>
+                                {% if not public_share_mode %}
+                                <p class="text-xs text-apple-gray-400 mt-1">Or use the Local Folder tab</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div id="gal-preview" class="grid grid-cols-4 sm:grid-cols-6 gap-2 mt-3 hidden"></div>
+                    </div>
+
+                    {% if not public_share_mode %}
+                    <div id="gallery-folder-area" class="hidden">
+                        <input type="text" id="gallery-path" placeholder="/path/to/your/photo/folder"
+                               class="w-full px-4 py-3 bg-apple-gray-50 border border-apple-gray-200 rounded-apple text-sm focus:outline-none focus:ring-2 focus:ring-apple-blue/30 focus:border-apple-blue transition-all" />
+                        <p class="text-xs text-apple-gray-400 mt-2 ml-1">Absolute path to a folder on your computer</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Card: Settings -->
+                <div class="card">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-9 h-9 rounded-full bg-apple-green/10 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-apple-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-base">Settings</h3>
+                            <p class="text-apple-gray-500 text-xs">Fine-tune the matching behaviour</p>
+                        </div>
+                    </div>
+
+                    <div class="grid sm:grid-cols-2 gap-5">
+                        <!-- Match Mode -->
+                        <div>
+                            <label class="block text-xs font-medium text-apple-gray-500 mb-2 ml-1">Match Mode</label>
+                            <div class="flex bg-apple-gray-100 rounded-lg p-0.5">
+                                <button type="button" onclick="setMatchMode('any')" id="mode-any"
+                                        class="match-mode-btn flex-1 text-sm font-medium py-2.5 rounded-md transition-all active">
+                                    Any Person
+                                </button>
+                                <button type="button" onclick="setMatchMode('all')" id="mode-all"
+                                        class="match-mode-btn flex-1 text-sm font-medium py-2.5 rounded-md transition-all">
+                                    All People
+                                </button>
+                            </div>
+                            <p class="text-xs text-apple-gray-400 mt-2 ml-1" id="mode-desc">Match if <strong>any</strong> target person appears</p>
+                        </div>
+
+                        <!-- Threshold -->
+                        <div>
+                            <label class="block text-xs font-medium text-apple-gray-500 mb-2 ml-1">
+                                Confidence Threshold
+                                <span id="threshold-value" class="text-apple-blue font-semibold ml-1">0.38</span>
+                            </label>
+                            <input type="range" id="threshold" min="0.20" max="0.70" step="0.01" value="0.38"
+                                   class="w-full accent-apple-blue h-1.5 bg-apple-gray-200 rounded-full appearance-none cursor-pointer mt-2" />
+                            <div class="flex justify-between text-[10px] text-apple-gray-400 mt-1">
+                                <span>Lenient</span>
+                                <span>Strict</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" id="submit-btn"
+                        class="w-full py-3.5 bg-gradient-to-r from-apple-blue to-apple-indigo text-white font-semibold text-base rounded-apple-lg shadow-apple-md hover:shadow-apple-lg active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100">
+                    <span id="submit-text">Start Sorting</span>
+                    <span id="submit-spinner" class="hidden">
+                        <svg class="inline w-5 h-5 animate-spin -ml-1 mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                        Processing …
+                    </span>
+                </button>
+            </form>
+
+            <!-- ──── Progress Panel (appears during processing) ──── -->
+            <div id="progress-panel" class="max-w-2xl mx-auto mt-8 hidden animate-fadeIn">
+                <div class="card">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold text-base">Live Progress</h3>
+                        <span id="progress-status" class="px-3 py-1 text-xs font-medium rounded-full bg-apple-orange/10 text-apple-orange">Processing</span>
+                    </div>
+                    <div class="w-full bg-apple-gray-100 rounded-full h-2 mb-4">
+                        <div id="progress-bar" class="bg-gradient-to-r from-apple-blue to-apple-indigo h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    <div id="progress-log" class="bg-apple-gray-50 rounded-apple p-4 h-48 overflow-y-auto font-mono text-xs text-apple-gray-600 space-y-1 scroll-smooth"></div>
+                </div>
+            </div>
+
+            <!-- ──── Results Panel ──── -->
+            <div id="results-panel" class="max-w-2xl mx-auto mt-6 hidden animate-fadeIn">
+                <div class="card">
+                    <div class="flex items-center justify-between mb-5">
+                        <h3 class="font-semibold text-lg">Results</h3>
+                        <button onclick="openOutputFolder()" class="text-sm text-apple-blue font-medium hover:underline">Open Folder →</button>
+                    </div>
+                    <div id="results-stats" class="grid grid-cols-3 gap-3 mb-4"></div>
+                    <div id="results-targets" class="mt-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ──── HISTORY TAB ──── -->
+        <section id="panel-history" class="tab-panel hidden">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-display font-bold tracking-tight">Job History</h2>
+                <button onclick="loadHistory()" class="text-sm text-apple-blue font-medium hover:underline">Refresh</button>
+            </div>
+            <div id="history-list" class="space-y-3">
+                <p class="text-apple-gray-400 text-sm text-center py-12">Loading …</p>
+            </div>
+        </section>
+
+        <!-- ──── DASHBOARD TAB ──── -->
+        <section id="panel-dashboard" class="tab-panel hidden">
+            <h2 class="text-2xl font-display font-bold tracking-tight mb-6">Dashboard</h2>
+            <div id="dashboard-cards" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+        </section>
+
+    </main>
+
+    <!-- ═══════════════════ FOOTER ═══════════════════ -->
+    <footer class="border-t border-apple-gray-200/60 mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between text-xs text-apple-gray-400">
+            <span>Face Sort Studio &middot; Local deep-learning photo sorting</span>
+            <span class="mt-1 sm:mt-0">YuNet + SFace &middot; OpenCV DNN</span>
+        </div>
+    </footer>
+
+    <script>
+        window.FACE_SORT_CONFIG = {
+            publicShareMode: {{ "true" if public_share_mode else "false" }}
+        };
+    </script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

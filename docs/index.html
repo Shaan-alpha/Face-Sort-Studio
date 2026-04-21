@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Face Sort Studio</title>
+    <meta
+        name="description"
+        content="Face Sort Studio is a Flask and OpenCV project for sorting photos by the people who appear in them."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+    <div class="page-shell">
+        <header class="hero">
+            <p class="eyebrow">GitHub Pages Site</p>
+            <h1>Face Sort Studio</h1>
+            <p class="hero-copy">
+                Sort photo collections by face with a Flask backend, OpenCV
+                models, and a polished browser UI.
+            </p>
+            <div class="hero-actions">
+                <a class="button button-primary" href="#setup">Local Setup</a>
+                <a class="button button-secondary" href="#hosting">Hosting Notes</a>
+            </div>
+        </header>
+
+        <main>
+            <section class="notice">
+                <h2>Important</h2>
+                <p>
+                    GitHub Pages can host this overview site, but it cannot run
+                    the real sorter. The working app needs Python, Flask,
+                    SQLite, local file access, and model downloads.
+                </p>
+            </section>
+
+            <section class="grid-section">
+                <article class="card">
+                    <h2>What The App Does</h2>
+                    <p>
+                        Upload reference photos, provide a gallery, and let the
+                        backend detect faces, compare embeddings, and sort
+                        images into matched, partial, and unmatched folders.
+                    </p>
+                </article>
+                <article class="card">
+                    <h2>Why Pages Still Helps</h2>
+                    <p>
+                        Pages is still useful for a public project page,
+                        documentation, screenshots, release notes, and sharing
+                        the repository with recruiters, teammates, or users.
+                    </p>
+                </article>
+            </section>
+
+            <section class="feature-strip">
+                <div class="feature">
+                    <span class="feature-label">Backend</span>
+                    <strong>Flask + SQLAlchemy</strong>
+                </div>
+                <div class="feature">
+                    <span class="feature-label">Vision</span>
+                    <strong>OpenCV YuNet + SFace</strong>
+                </div>
+                <div class="feature">
+                    <span class="feature-label">Updates</span>
+                    <strong>Server-Sent Events</strong>
+                </div>
+                <div class="feature">
+                    <span class="feature-label">Output</span>
+                    <strong>Sorted local folders</strong>
+                </div>
+            </section>
+
+            <section id="setup" class="card card-wide">
+                <h2>Run It Locally</h2>
+                <ol>
+                    <li>Install Python 3.13 or newer.</li>
+                    <li>Install dependencies with <code>python -m pip install -r requirements.txt</code>.</li>
+                    <li>Create the data folders or run <code>scripts/setup.ps1</code>.</li>
+                    <li>Start the app with <code>python run.py</code> or <code>scripts/run.ps1</code>.</li>
+                    <li>Open the URL printed by Flask.</li>
+                </ol>
+            </section>
+
+            <section id="hosting" class="grid-section">
+                <article class="card">
+                    <h2>Use GitHub Pages For</h2>
+                    <ul>
+                        <li>Project overview and branding</li>
+                        <li>Setup steps and documentation</li>
+                        <li>Demo images and architecture notes</li>
+                        <li>A clean public landing page for the repo</li>
+                    </ul>
+                </article>
+                <article class="card">
+                    <h2>Use A Python Host For</h2>
+                    <ul>
+                        <li>The Flask API and upload handling</li>
+                        <li>SQLite and generated job data</li>
+                        <li>Model downloads and face recognition</li>
+                        <li>Real sorting jobs and file output</li>
+                    </ul>
+                </article>
+            </section>
+
+            <section class="card card-wide">
+                <h2>Publish This Pages Site</h2>
+                <ol>
+                    <li>Push the repository to GitHub.</li>
+                    <li>Open repository settings.</li>
+                    <li>Go to <strong>Pages</strong>.</li>
+                    <li>Select <strong>Deploy from a branch</strong>.</li>
+                    <li>Choose your branch and the <code>/docs</code> folder.</li>
+                </ol>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <span>Face Sort Studio</span>
+            <span>GitHub Pages overview for a Flask-powered project</span>
+        </footer>
+    </div>
+</body>
+</html>
