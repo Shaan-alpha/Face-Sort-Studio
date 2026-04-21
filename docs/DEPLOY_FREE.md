@@ -62,21 +62,11 @@ What the script does:
 
 Keep both PowerShell windows open while the app is live.
 
-## Push To GitHub Safely
+## Push To GitHub
 
-Right now, Git on this machine is rooted at `C:\Users\shaan`, not this project. Do not run `git add .` from that parent repo, or you may stage your whole home folder.
+Make sure you are running git commands from inside the `face-sort-studio` project folder, not a parent directory.
 
-Create a dedicated Git repo inside `face-sort-studio` instead:
-
-```powershell
-cd C:\Users\shaan\OneDrive\Desktop\face-sort-studio
-git init
-git branch -M main
-git add .
-git commit -m "Initial commit"
-```
-
-Then create an empty GitHub repository named `face-sort-studio` and connect it:
+If the remote is not set up yet:
 
 ```powershell
 git remote add origin https://github.com/<your-username>/face-sort-studio.git
@@ -84,8 +74,6 @@ git push -u origin main
 ```
 
 ## Ongoing Updates
-
-After the first push:
 
 ```powershell
 git add .

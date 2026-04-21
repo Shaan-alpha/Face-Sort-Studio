@@ -10,6 +10,7 @@ import uuid
 import json
 import shutil
 import threading
+import time
 
 from flask import (
     Flask, render_template, request, jsonify,
@@ -196,7 +197,6 @@ def create_app(config_overrides=None):
                 if job.status in ("completed", "failed"):
                     yield f"data: {json.dumps({'status': job.status})}\n\n"
                     break
-                import time
                 time.sleep(0.5)
 
         return Response(

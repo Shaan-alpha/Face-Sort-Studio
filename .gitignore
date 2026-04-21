@@ -10,11 +10,15 @@ __pycache__/
 *.egg-info/
 
 # ── Data (generated at runtime) ──────────────────────────────
-data/database/*.db
+data/database/
 data/jobs/
 data/outputs/
 data/models/*.onnx
 data/logs/
+
+# ── Secrets ───────────────────────────────────────────────────
+.env
+*.env
 
 # ── IDE ──────────────────────────────────────────────────────
 .vscode/settings.json

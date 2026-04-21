@@ -67,7 +67,8 @@ face-sort-studio/
 │
 ├── scripts/
 │   ├── setup.ps1                   # One-click environment setup
-│   └── run.ps1                     # One-click server start
+│   ├── run.ps1                     # One-click server start
+│   └── share-with-tailscale.ps1    # Start app + open Tailscale Funnel
 │
 ├── tests/
 │   └── test_app.py                 # Smoke tests
@@ -149,6 +150,14 @@ Based on your match mode:
 - **All mode** — a photo is "matched" only if **every** target person appears. Photos with some (but not all) targets go into "partial".
 
 Photos are copied (never moved) into the output folders.
+
+---
+
+## Prerequisites
+
+- **Python 3.11+** — [python.org](https://python.org/downloads)
+- **Windows** — scripts are PowerShell; the core app runs on any OS
+- **Tailscale** (optional) — only needed for the public sharing flow
 
 ---
 
@@ -348,4 +357,4 @@ Server-Sent Events are simpler (one-directional: server → client), work over s
 
 ## License
 
-This project is for personal and educational use.
+MIT — see [LICENSE](LICENSE).
