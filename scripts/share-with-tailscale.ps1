@@ -24,14 +24,30 @@ if (-not $python) {
 }
 
 $tailscale = Get-Command tailscale -ErrorAction SilentlyContinue
-if (-not $tailscale) {
-    Write-Host "Tailscale was not found on PATH." -ForegroundColor Red
+$tailscaleExe = $null
+if ($tailscale) {
+    $tailscaleExe = $tailscale.Source
+} else {
+    $candidatePaths = @(
+        "C:\Program Files\Tailscale\tailscale.exe",
+        "C:\Program Files (x86)\Tailscale\tailscale.exe"
+    )
+    foreach ($candidate in $candidatePaths) {
+        if (Test-Path $candidate) {
+            $tailscaleExe = $candidate
+            break
+        }
+    }
+}
+
+if (-not $tailscaleExe) {
+    Write-Host "Tailscale was not found on PATH or in its default install folders." -ForegroundColor Red
     Write-Host "Install Tailscale, sign in, then rerun this script." -ForegroundColor Yellow
     exit 1
 }
 
 try {
-    & $tailscale.Source status | Out-Null
+    & $tailscaleExe status | Out-Null
 } catch {
     Write-Host "Tailscale is installed, but it does not appear to be signed in yet." -ForegroundColor Red
     Write-Host "Open Tailscale, sign in, then rerun this script." -ForegroundColor Yellow
@@ -62,26 +78,20 @@ if (-not $serverReady) {
     Write-Host "|   Face Sort Studio - Shared Launch     |" -ForegroundColor Cyan
     Write-Host "+----------------------------------------+" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "Starting the Flask app in a new PowerShell window..." -ForegroundColor Yellow
+    Write-Host "Starting the Flask app as a background process..." -ForegroundColor Yellow
 
-    $escapedRoot = $root.Replace("'", "''")
-    $serverCommand = (
-        "& { " +
-        "Set-Location '$escapedRoot'; " +
-        "`$env:FACE_SORT_PUBLIC_SHARE_MODE='1'; " +
-        "`$env:FACE_SORT_DEBUG='0'; " +
-        "`$env:FACE_SORT_PORT='$Port'; " +
-        "python run.py" +
-        " }"
-    )
+    $logsDir = Join-Path $root "data\logs"
+    if (-not (Test-Path $logsDir)) {
+        New-Item -ItemType Directory -Path $logsDir -Force | Out-Null
+    }
 
-    Start-Process powershell -ArgumentList @(
-        "-NoExit",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-Command",
-        $serverCommand
-    ) | Out-Null
+    $env:FACE_SORT_PUBLIC_SHARE_MODE = "1"
+    $env:FACE_SORT_DEBUG = "0"
+    $env:FACE_SORT_PORT = "$Port"
+
+    Start-Process python -WorkingDirectory $root -ArgumentList "run.py" `
+        -RedirectStandardOutput (Join-Path $logsDir "share-server.out.log") `
+        -RedirectStandardError (Join-Path $logsDir "share-server.err.log") | Out-Null
 
     for ($i = 0; $i -lt 30; $i++) {
         Start-Sleep -Seconds 1
@@ -97,7 +107,7 @@ if (-not $serverReady) {
 
     if (-not $serverReady -or -not $sharedModeReady) {
         Write-Host "The app did not become ready on $serverUrl." -ForegroundColor Red
-        Write-Host "Check the new PowerShell window for startup errors, then rerun this script." -ForegroundColor Yellow
+        Write-Host "Check data\logs\share-server.err.log for startup errors, then rerun this script." -ForegroundColor Yellow
         exit 1
     }
 } else {
@@ -109,10 +119,14 @@ if ($Private) {
     Write-Host "Starting a private Tailscale share..." -ForegroundColor Cyan
     Write-Host "Only devices in your tailnet will be able to open it." -ForegroundColor White
     Write-Host ""
-    & $tailscale.Source serve $Port
+    & $tailscaleExe serve --bg --yes $Port
+    Write-Host ""
+    & $tailscaleExe serve status
 } else {
     Write-Host "Starting a public Tailscale Funnel..." -ForegroundColor Cyan
-    Write-Host "Keep this window open while the app is shared." -ForegroundColor White
+    Write-Host "The tunnel will be configured in the background." -ForegroundColor White
     Write-Host ""
-    & $tailscale.Source funnel $Port
+    & $tailscaleExe funnel --bg --yes $Port
+    Write-Host ""
+    & $tailscaleExe funnel status
 }
