@@ -18,6 +18,45 @@ let currentJobId = null;
 let eventSource = null;
 
 // ═══════════════════════════════════════════════════════════════
+// Theme Management
+// ═══════════════════════════════════════════════════════════════
+function initTheme() {
+    const savedTheme = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const isDark = savedTheme === "dark" || (!savedTheme && prefersDark);
+    
+    if (isDark) {
+        document.documentElement.classList.add("dark");
+    } else {
+        document.documentElement.classList.remove("dark");
+    }
+    updateThemeIcons(isDark);
+}
+
+function toggleTheme() {
+    const isDark = document.documentElement.classList.toggle("dark");
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+    updateThemeIcons(isDark);
+}
+
+function updateThemeIcons(isDark) {
+    const lightIcon = document.getElementById("theme-icon-light");
+    const darkIcon = document.getElementById("theme-icon-dark");
+    if (!lightIcon || !darkIcon) return;
+
+    if (isDark) {
+        lightIcon.classList.remove("hidden");
+        darkIcon.classList.add("hidden");
+    } else {
+        lightIcon.classList.add("hidden");
+        darkIcon.classList.remove("hidden");
+    }
+}
+
+// Call init on load
+initTheme();
+
+// ═══════════════════════════════════════════════════════════════
 // Tabs
 // ═══════════════════════════════════════════════════════════════
 function showTab(name) {
@@ -304,19 +343,59 @@ async function showResults(jobId) {
             </div>
         `;
 
-        const targetsEl = document.getElementById("results-targets");
-        if (job.targets_found > 0) {
-            targetsEl.innerHTML = `
-                <p class="text-sm text-apple-gray-500">
-                    ${job.targets_found} person(s) discovered from references &middot; 
-                    Mode: <strong>${job.match_mode}</strong> &middot; 
-                    Threshold: <strong>${job.threshold}</strong>
-                </p>
-            `;
-        }
-
+        renderDownloadButtons(jobId, job, "results-downloads");
         panel.scrollIntoView({ behavior: "smooth", block: "start" });
     } catch { /* ignore */ }
+}
+
+function renderDownloadButtons(jobId, job, containerId) {
+    // 1. Update targets section (always show if targets found)
+    const targetsEl = document.getElementById("results-targets");
+    if (targetsEl && job.targets_found > 0) {
+        targetsEl.innerHTML = `
+            <p class="text-sm text-apple-gray-500">
+                ${job.targets_found} person(s) discovered from references &middot; 
+                Mode: <strong>${job.match_mode}</strong> &middot; 
+                Threshold: <strong>${job.threshold}</strong>
+            </p>
+        `;
+    }
+
+    // 2. Render download buttons (only if completed)
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    if (job.status !== "completed") {
+        container.classList.add("hidden");
+        return;
+    }
+
+    const html = `
+        ${job.matched_count > 0 ? `
+            <a href="/outputs/${jobId}/matched.zip" download
+               class="flex items-center gap-2 px-4 py-2 bg-apple-green text-white text-sm font-medium rounded-apple shadow-apple hover:shadow-apple-md active:scale-[0.98] transition-all">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                Download Matched (${job.matched_count})
+            </a>
+        ` : ""}
+        ${job.partial_count > 0 ? `
+            <a href="/outputs/${jobId}/partial.zip" download
+               class="flex items-center gap-2 px-4 py-2 bg-apple-orange text-white text-sm font-medium rounded-apple shadow-apple hover:shadow-apple-md active:scale-[0.98] transition-all">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                Download Partial (${job.partial_count})
+            </a>
+        ` : ""}
+        ${job.unmatched_count > 0 ? `
+            <a href="/outputs/${jobId}/unmatched.zip" download
+               class="flex items-center gap-2 px-4 py-2 bg-apple-gray-500 text-white text-sm font-medium rounded-apple shadow-apple hover:shadow-apple-md active:scale-[0.98] transition-all">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                Download Unmatched (${job.unmatched_count})
+            </a>
+        ` : ""}
+    `;
+
+    container.innerHTML = html;
+    container.classList.remove("hidden");
 }
 
 function openOutputFolder() {
@@ -342,23 +421,33 @@ async function loadHistory() {
         container.innerHTML = jobs.map(job => {
             const date = job.created_at ? new Date(job.created_at).toLocaleString() : "—";
             const badge = badgeHTML(job.status);
+            const downloads = `
+                <div class="flex gap-2 mt-2">
+                    ${job.matched_count > 0 ? `<a href="/outputs/${job.id}/matched.zip" download class="text-[10px] bg-apple-green/10 text-apple-green px-2 py-0.5 rounded-full hover:bg-apple-green/20">Download Matched</a>` : ""}
+                    ${job.partial_count > 0 ? `<a href="/outputs/${job.id}/partial.zip" download class="text-[10px] bg-apple-orange/10 text-apple-orange px-2 py-0.5 rounded-full hover:bg-apple-orange/20">Download Partial</a>` : ""}
+                    ${job.unmatched_count > 0 ? `<a href="/outputs/${job.id}/unmatched.zip" download class="text-[10px] bg-apple-gray-100 text-apple-gray-500 px-2 py-0.5 rounded-full hover:bg-apple-gray-200">Download Unmatched</a>` : ""}
+                </div>
+            `;
             return `
-                <div class="history-row flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fadeIn">
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-2 mb-1">
-                            ${badge}
-                            <span class="text-xs text-apple-gray-400 font-mono">${job.id.slice(0, 8)}</span>
+                <div class="history-row animate-fadeIn">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1">
+                                ${badge}
+                                <span class="text-xs text-apple-gray-400 font-mono">${job.id.slice(0, 8)}</span>
+                            </div>
+                            <p class="text-xs text-apple-gray-500">${date} &middot; Mode: ${job.match_mode} &middot; Threshold: ${job.threshold}</p>
                         </div>
-                        <p class="text-xs text-apple-gray-500">${date} &middot; Mode: ${job.match_mode} &middot; Threshold: ${job.threshold}</p>
+                        <div class="flex items-center gap-3 text-sm">
+                            <span class="text-apple-green font-semibold">${job.matched_count || 0}<span class="text-xs font-normal ml-0.5 text-apple-gray-400">match</span></span>
+                            <span class="text-apple-orange font-semibold">${job.partial_count || 0}<span class="text-xs font-normal ml-0.5 text-apple-gray-400">partial</span></span>
+                            <span class="text-apple-gray-500 font-semibold">${job.unmatched_count || 0}<span class="text-xs font-normal ml-0.5 text-apple-gray-400">none</span></span>
+                            <button onclick="deleteJob('${job.id}')" class="text-apple-red/60 hover:text-apple-red transition-colors" title="Delete">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-3 text-sm">
-                        <span class="text-apple-green font-semibold">${job.matched_count || 0}<span class="text-xs font-normal ml-0.5 text-apple-gray-400">match</span></span>
-                        <span class="text-apple-orange font-semibold">${job.partial_count || 0}<span class="text-xs font-normal ml-0.5 text-apple-gray-400">partial</span></span>
-                        <span class="text-apple-gray-500 font-semibold">${job.unmatched_count || 0}<span class="text-xs font-normal ml-0.5 text-apple-gray-400">none</span></span>
-                        <button onclick="deleteJob('${job.id}')" class="text-apple-red/60 hover:text-apple-red transition-colors" title="Delete">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                        </button>
-                    </div>
+                    ${job.status === "completed" ? downloads : ""}
                 </div>
             `;
         }).join("");

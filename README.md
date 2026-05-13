@@ -1,4 +1,4 @@
-# Face Sort Studio
+# Face Sort Studio v2.0.0
 
 **Local deep-learning photo sorting — powered by face recognition.**
 
@@ -22,6 +22,7 @@ Everything runs locally on your machine. No cloud uploads, no API keys, no subsc
 | `unmatched/` | Photos with no target matches |
 | `by_target/` | Sub-folders per person — each person gets their own folder |
 | `targets/` | Cropped reference face thumbnails |
+| `*.zip` | Compressed archives of each category for easy download |
 | `report.json` | Full machine-readable results |
 
 ---
@@ -182,14 +183,21 @@ powershell -ExecutionPolicy Bypass -File .\scripts\run.ps1
 ### Option C — Manual
 
 ```bash
-# Install dependencies into your active Python environment
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+# 1. Create and activate virtual environment
+python -m venv venv
+# Windows:
+.\venv\Scripts\activate
+# macOS/Linux:
+source venv/bin/activate
 
-# Create data directories
+# 2. Install dependencies
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# 3. Create data directories
 python -c "from pathlib import Path; [Path(p).mkdir(parents=True, exist_ok=True) for p in ('data/database', 'data/jobs', 'data/outputs', 'data/models')]"
 
-# Run the app (models download automatically on first start)
+# 4. Run the app
 python run.py
 ```
 
@@ -231,8 +239,11 @@ When complete, the results panel shows match/partial/unmatched counts. Output fi
 ```
 data/outputs/<job-id>/
 ├── matched/
+├── matched.zip                     # Compressed matched results
 ├── partial/
+├── partial.zip                     # Compressed partial results
 ├── unmatched/
+├── unmatched.zip                   # Compressed unmatched results
 ├── by_target/
 │   ├── Person_01/
 │   └── Person_02/
@@ -318,7 +329,6 @@ These are planned or suggested improvements for future versions:
 
 ### Near-Term
 - **Person renaming** — rename "Person_01" to actual names in the UI
-- **Zip download** — export matched results as a .zip archive
 - **Face bounding box preview** — overlay detected faces on image thumbnails
 - **Batch operations** — re-run a previous job with different settings
 - **Dark mode** — toggle between light and dark themes

@@ -289,6 +289,54 @@ input[type="range"]::-moz-range-thumb {
     margin-top: 0.25rem;
 }
 
+/* ── Dark Mode Overrides ─────────────────────────────────────── */
+.dark body {
+    background-color: #000;
+    color: #F2F2F7;
+}
+
+.dark nav {
+    background-color: rgba(28, 28, 30, 0.8) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .card, 
+.dark .dash-card, 
+.dark .history-row {
+    background: #1C1C1E;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #F2F2F7;
+}
+
+.dark .tab-btn:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.05);
+    color: #AEAEB2;
+}
+
+.dark .match-mode-btn.active,
+.dark .gallery-mode-btn.active {
+    background: #3A3A3C;
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.dark input, 
+.dark select, 
+.dark textarea {
+    background: #2C2C2E !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+}
+
+.dark .thumb-container {
+    background: #2C2C2E;
+}
+
+.dark #progress-log {
+    background: #1C1C1E !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
 /* ── Responsive tweaks ──────────────────────────────────────── */
 @media (max-width: 640px) {
     .card {

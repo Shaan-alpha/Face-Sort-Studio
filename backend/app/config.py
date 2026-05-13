@@ -13,6 +13,7 @@ DATA_DIR = BASE_DIR / "data"
 
 
 class Config:
+    VERSION = "2.0.0"
     SECRET_KEY = os.environ.get("SECRET_KEY", "face-sort-studio-dev-key")
     PUBLIC_SHARE_MODE = os.environ.get(
         "FACE_SORT_PUBLIC_SHARE_MODE", ""

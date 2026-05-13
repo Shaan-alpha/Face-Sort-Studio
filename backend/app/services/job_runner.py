@@ -266,7 +266,23 @@ def run_sorting_job(app, job_id: str):
                     ),
                 )
 
-            # ── Step 4: finalise ─────────────────────────────────
+            # ── Step 4: create zips ──────────────────────────────
+            _log(job_dir, "Compressing results into zip archives …")
+            for cat, folder in [
+                ("matched", matched_dir),
+                ("partial", partial_dir),
+                ("unmatched", unmatched_dir),
+            ]:
+                if os.path.exists(folder) and os.listdir(folder):
+                    try:
+                        shutil.make_archive(
+                            os.path.join(out_dir, cat), "zip", folder
+                        )
+                        _log(job_dir, f"  Generated {cat}.zip")
+                    except Exception as e:
+                        _log(job_dir, f"  Failed to zip {cat}: {e}")
+
+            # ── Step 5: finalise ─────────────────────────────────
             job.matched_count = matched_count
             job.partial_count = partial_count
             job.unmatched_count = unmatched_count

@@ -9,12 +9,8 @@ __pycache__/
 .mypy_cache/
 *.egg-info/
 
-# ── Data (generated at runtime) ──────────────────────────────
-data/database/
-data/jobs/
-data/outputs/
-data/models/*.onnx
-data/logs/
+# ── Data (local state) ───────────────────────────────────────
+data/
 
 # ── Secrets ───────────────────────────────────────────────────
 .env

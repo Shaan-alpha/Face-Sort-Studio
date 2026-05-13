@@ -9,6 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -58,7 +59,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
 </head>
 
-<body class="bg-apple-gray-100 font-body text-apple-gray-900 min-h-screen antialiased">
+<body class="bg-apple-gray-100 font-body text-apple-gray-900 min-h-screen antialiased transition-colors duration-300">
 
     <!-- ═══════════════════ NAVIGATION ═══════════════════ -->
     <nav class="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-apple-gray-200/60">
@@ -68,12 +69,19 @@
                     <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-apple-blue to-apple-indigo flex items-center justify-center shadow-apple">
                         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                     </div>
-                    <h1 class="text-lg font-semibold font-display tracking-tight">Face Sort Studio</h1>
+                    <h1 class="text-base sm:text-lg font-semibold font-display tracking-tight whitespace-nowrap">Face Sort Studio</h1>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="showTab('create')" id="tab-create" class="tab-btn active px-4 py-1.5 text-sm font-medium rounded-full transition-all">New Job</button>
-                    <button onclick="showTab('history')" id="tab-history" class="tab-btn px-4 py-1.5 text-sm font-medium rounded-full transition-all">History</button>
-                    <button onclick="showTab('dashboard')" id="tab-dashboard" class="tab-btn px-4 py-1.5 text-sm font-medium rounded-full transition-all">Dashboard</button>
+                <div class="flex items-center gap-1 sm:gap-2">
+                    <button onclick="showTab('create')" id="tab-create" class="tab-btn active px-2 sm:px-4 py-1.5 text-[11px] sm:text-sm font-medium rounded-full transition-all">New Job</button>
+                    <button onclick="showTab('history')" id="tab-history" class="tab-btn px-2 sm:px-4 py-1.5 text-[11px] sm:text-sm font-medium rounded-full transition-all">History</button>
+                    <button onclick="showTab('dashboard')" id="tab-dashboard" class="tab-btn px-2 sm:px-4 py-1.5 text-[11px] sm:text-sm font-medium rounded-full transition-all">Dashboard</button>
+                    <div class="w-px h-6 bg-apple-gray-200/60 mx-1"></div>
+                    <button onclick="toggleTheme()" class="w-8 h-8 flex items-center justify-center rounded-full text-apple-gray-500 hover:bg-apple-gray-100 dark:hover:bg-apple-gray-800 transition-all active:scale-90" title="Toggle Theme">
+                        <!-- Light Bulb (Off/Outline for Light Mode) -->
+                        <svg id="theme-icon-dark" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.989-2.386l-.548-.547z"/></svg>
+                        <!-- Light Bulb (On/Filled for Dark Mode) -->
+                        <svg id="theme-icon-light" class="w-5 h-5 hidden text-apple-yellow" fill="currentColor" viewBox="0 0 20 20"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.477.859h4z"/></svg>
+                    </button>
                 </div>
             </div>
         </div>
@@ -257,7 +265,8 @@
                         <h3 class="font-semibold text-lg">Results</h3>
                         <button onclick="openOutputFolder()" class="text-sm text-apple-blue font-medium hover:underline">Open Folder →</button>
                     </div>
-                    <div id="results-stats" class="grid grid-cols-3 gap-3 mb-4"></div>
+                    <div id="results-stats" class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4"></div>
+                    <div id="results-downloads" class="flex flex-wrap gap-2 mb-4 hidden"></div>
                     <div id="results-targets" class="mt-4"></div>
                 </div>
             </div>
@@ -285,7 +294,7 @@
     <!-- ═══════════════════ FOOTER ═══════════════════ -->
     <footer class="border-t border-apple-gray-200/60 mt-16">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between text-xs text-apple-gray-400">
-            <span>Face Sort Studio &middot; Local deep-learning photo sorting</span>
+            <span>Face Sort Studio v{{ config.VERSION }} &middot; Local deep-learning photo sorting</span>
             <span class="mt-1 sm:mt-0">YuNet + SFace &middot; OpenCV DNN</span>
         </div>
     </footer>
