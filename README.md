@@ -1,10 +1,10 @@
-# Face Sort Studio v2.1.0
+# Face Sort Studio v2.1.1
 
-**Local deep-learning photo sorting — powered by face recognition.**
+**Local deep-learning photo organization — powered by face recognition.**
 
-Face Sort Studio scans your photo gallery and automatically sorts images into folders based on the people in them. Upload reference photos of the people you want to find, point the app at your gallery, and let the AI handle the rest.
+Face Sort Studio is a privacy-first tool that scans your photo gallery and automatically organizes images into folders based on the people in them. Using high-performance deep learning models, it detects every face and creates unique identity embeddings to match targets with precision—all while remaining 100% offline.
 
-Everything runs locally on your machine. No cloud uploads, no API keys, no subscriptions.
+Everything runs locally on your hardware. No cloud uploads, no API keys, and no data leaves your machine.
 
 ---
 
@@ -24,6 +24,15 @@ Everything runs locally on your machine. No cloud uploads, no API keys, no subsc
 | `targets/` | Cropped reference face thumbnails |
 | `*.zip` | Compressed archives of each category for easy download |
 | `report.json` | Full machine-readable results |
+
+---
+
+## 🔒 Privacy & Security
+
+- **100% Offline**: No data ever leaves your machine. All processing happens locally on your hardware.
+- **No Cloud Dependency**: No external APIs (Azure, AWS, Google Cloud) are used for face analysis.
+- **Secure Persistence**: Results and identity embeddings are stored in a local SQLite database.
+- **Zero Tracking**: The application does not include telemetry or usage tracking.
 
 ---
 

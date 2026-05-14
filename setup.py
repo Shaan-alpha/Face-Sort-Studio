@@ -11,10 +11,10 @@ setup(
     name="face-sort-studio",
     version=version,
     author="Shaan-alpha",
-    description="Local deep-learning photo sorting — powered by face recognition.",
+    description="Privacy-first local photo organization powered by deep learning face recognition.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Shaan-alpha/Face-Sort-Studio",
+    url="https://github.com/Shaan-alpha/face-sort-studio",
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
