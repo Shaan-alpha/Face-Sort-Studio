@@ -42,7 +42,7 @@ Write-Host "       Data directories ready." -ForegroundColor Green
 # Step 3: Download DL models
 Write-Host "[3/3] Checking deep-learning models ..." -ForegroundColor Yellow
 $modelsDir = Join-Path $root "data\models"
-python -c "from backend.app.bootstrap import ensure_models_exist; ensure_models_exist(r'$modelsDir')"
+python -c "from face_sort.app.bootstrap import ensure_models_exist; ensure_models_exist(r'$modelsDir')"
 Write-Host "       Models ready." -ForegroundColor Green
 
 Write-Host ""

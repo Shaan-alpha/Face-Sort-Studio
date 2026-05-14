@@ -1,4 +1,4 @@
-# Face Sort Studio v2.0.0
+# Face Sort Studio v2.1.0
 
 **Local deep-learning photo sorting — powered by face recognition.**
 
@@ -48,7 +48,7 @@ face-sort-studio/
 ├── run.py                          # Entry point — starts Flask
 ├── requirements.txt                # Python dependencies
 │
-├── backend/
+├── face_sort/
 │   └── app/
 │       ├── main.py                 # Flask app factory + all routes
 │       ├── config.py               # Paths, thresholds, tunables
@@ -191,14 +191,13 @@ python -m venv venv
 source venv/bin/activate
 
 # 2. Install dependencies
-pip install --upgrade pip
-pip install -r requirements.txt
+pip install -e .
 
 # 3. Create data directories
 python -c "from pathlib import Path; [Path(p).mkdir(parents=True, exist_ok=True) for p in ('data/database', 'data/jobs', 'data/outputs', 'data/models')]"
 
 # 4. Run the app
-python run.py
+face-sort
 ```
 
 Then open the URL printed by Flask.

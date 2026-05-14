@@ -1,0 +1,3 @@
+include VERSION
+recursive-include face_sort/app/static *
+recursive-include face_sort/app/templates *

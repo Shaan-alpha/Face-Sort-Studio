@@ -7,7 +7,7 @@ Or via Flask:   flask --app run:app run --reload
 
 import os
 
-from backend.app.main import create_app
+from face_sort.app.main import create_app
 
 app = create_app()
 

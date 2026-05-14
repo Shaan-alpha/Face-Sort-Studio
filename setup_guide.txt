@@ -1,0 +1,44 @@
+# FACE SORT STUDIO - SETUP GUIDE (v2.1.0)
+========================================
+
+Follow these steps to get your local AI photo sorter running in minutes.
+
+### 1. DOWNLOAD & INSTALL PREREQUISITES
+---------------------------------------
+*   **Python 3.11 or 3.12**: Download from https://www.python.org/downloads/
+    *   IMPORTANT: During installation, check the box that says "Add Python to PATH".
+*   **Git (Optional)**: Download from https://git-scm.com/ to keep the code updated.
+
+### 2. ONE-CLICK SETUP (RECOMMENDED)
+-----------------------------------
+If you are on Windows:
+1. Open the project folder.
+2. Right-click `scripts\setup.ps1` and select "Run with PowerShell".
+3. The script will automatically:
+   *   Create a virtual environment (`venv`).
+   *   Install all necessary libraries (OpenCV, Flask, etc.).
+   *   Download the Face Recognition AI models (YuNet/SFace).
+
+### 3. HOW TO START THE APP
+---------------------------
+Once setup is complete, you can start the app in two ways:
+
+**Method A: Global Command (Best)**
+1. Open a terminal (cmd or powershell).
+2. Type `face-sort` and press Enter.
+3. Open your browser to http://127.0.0.1:8000
+
+**Method B: Desktop Script**
+1. Run `scripts\run.ps1` with PowerShell.
+2. It will start the server and open your browser automatically.
+
+### 4. TROUBLESHOOTING
+----------------------
+*   **"Python not found"**: Ensure you restarted your terminal after installing Python.
+*   **"Execution Policy Error"**: If scripts don't run, open PowerShell as Admin and run: 
+    `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
+*   **Model Download Failed**: Ensure you have an active internet connection for the first run. The app needs to download ~10MB of AI models.
+
+---
+Enjoy your organized photos! 
+Face Sort Studio - Privacy First AI.

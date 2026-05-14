@@ -16,8 +16,8 @@ import pytest
 # Ensure the project root is on the path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from backend.app.main import create_app
-from backend.app.database import db, Job, utc_now
+from face_sort.app.main import create_app
+from face_sort.app.database import db, Job, utc_now
 
 
 @pytest.fixture
@@ -224,12 +224,12 @@ class TestConfig:
 class TestFaceEngineImport:
     def test_can_import(self):
         """The face engine module should be importable."""
-        from backend.app.services.face_engine import FaceEngine
+        from face_sort.app.services.face_engine import FaceEngine
         assert FaceEngine is not None
 
     def test_missing_model_raises(self, tmp_path):
         """Instantiating with a bad path should raise FileNotFoundError."""
-        from backend.app.services.face_engine import FaceEngine
+        from face_sort.app.services.face_engine import FaceEngine
         with pytest.raises(FileNotFoundError):
             FaceEngine(str(tmp_path))
 
