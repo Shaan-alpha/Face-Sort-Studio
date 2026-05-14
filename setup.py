@@ -24,6 +24,10 @@ setup(
         "numpy",
         "pillow",
         "click",
+        "pystray",
+        "python-multipart",
+        "werkzeug",
+        "sqlalchemy",
     ],
     entry_points={
         "console_scripts": [

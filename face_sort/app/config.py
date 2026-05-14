@@ -6,14 +6,21 @@ module imports from one place.
 """
 
 import os
+import sys
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent  # project root
+if getattr(sys, 'frozen', False):
+    # Running as a bundled EXE - save data next to the EXE
+    BASE_DIR = Path(sys.executable).parent
+else:
+    # Running in development - save data in project root
+    BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
 DATA_DIR = BASE_DIR / "data"
 
 
 class Config:
-    VERSION = "2.0.0"
+    VERSION = "2.1.0"
     SECRET_KEY = os.environ.get("SECRET_KEY", "face-sort-studio-dev-key")
     PUBLIC_SHARE_MODE = os.environ.get(
         "FACE_SORT_PUBLIC_SHARE_MODE", ""

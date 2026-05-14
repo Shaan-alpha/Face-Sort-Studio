@@ -32,6 +32,11 @@ Once setup is complete, you can start the app in two ways:
 1. Run `scripts\run.ps1` with PowerShell.
 2. It will start the server and open your browser automatically.
 
+**Method C: Standalone EXE (Portable)**
+1. Go to the `dist/` folder.
+2. Double-click **`FaceSortStudio.exe`**.
+3. This works even if you don't have Python installed!
+
 ### 4. TROUBLESHOOTING
 ----------------------
 *   **"Python not found"**: Ensure you restarted your terminal after installing Python.

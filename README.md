@@ -38,7 +38,19 @@ Everything runs locally on your machine. No cloud uploads, no API keys, no subsc
 | Real-time Updates | **Server-Sent Events (SSE)** |
 | Automation | PowerShell scripts + VS Code tasks |
 
+*   **Portable EXE**: Build a standalone Windows executable for easy distribution.
+
 ---
+
+## 📦 Standalone EXE (Portable)
+If you want to run the app without installing Python or any libraries, you can build a portable Windows `.exe`:
+1.  Run `.\scripts\build.ps1` in PowerShell.
+2.  Find **`FaceSortStudio.exe`** in the `dist/` folder.
+3.  You can move this EXE anywhere—it's self-contained!
+
+---
+
+## 🚀 Quick Start (Local Setup)
 
 ## Project Structure
 

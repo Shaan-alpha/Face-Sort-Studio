@@ -20,6 +20,11 @@ data/
 .vscode/settings.json
 .idea/
 
+# ── Build & Dist ──────────────────────────────────────────────
+build/
+dist/
+*.spec
+
 # ── OS ───────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
