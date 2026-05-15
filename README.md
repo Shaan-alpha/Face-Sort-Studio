@@ -1,4 +1,4 @@
-# Face Sort Studio v2.1.2
+# Face Sort Studio v2.1.3
 
 [![Sponsor](https://img.shields.io/badge/Sponsor-💖_Support-EC4899)](https://github.com/sponsors/Shaan-alpha)
 
