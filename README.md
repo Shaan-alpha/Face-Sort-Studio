@@ -1,4 +1,6 @@
-# Face Sort Studio v2.1.1
+# Face Sort Studio v2.1.2
+
+[![Sponsor](https://img.shields.io/badge/Sponsor-💖_Support-EC4899)](https://github.com/sponsors/Shaan-alpha)
 
 **Local deep-learning photo organization — powered by face recognition.**
 
@@ -382,6 +384,14 @@ Zero configuration, no separate database server, single file. Perfect for a loca
 
 **Why SSE instead of WebSockets?**
 Server-Sent Events are simpler (one-directional: server → client), work over standard HTTP, and are all that is needed for progress streaming. The browser's `EventSource` API handles reconnection automatically.
+
+---
+
+## ⭐ Star History & Community
+
+We welcome contributions, bug reports, and feature requests! Check out our new interactive issue forms if you have ideas for new clustering algorithms or export formats. If you find Face Sort Studio helpful, consider giving it a star or sponsoring the project!
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Shaan-alpha/Face-Sort-Studio&type=Date)](https://star-history.com/#Shaan-alpha/Face-Sort-Studio&Date)
 
 ---
 

@@ -1,0 +1,46 @@
+name: 🐞 Bug Report
+description: Report an issue with face detection, embeddings, or the Flask backend.
+title: "[Bug]: "
+labels: ["bug"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Thanks for reporting an issue in Face-Sort-Studio! 📸
+        Please make sure you've checked the existing issues and verified your OpenCV / Flask environment before submitting.
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Prerequisites
+      options:
+        - label: I have verified that OpenCV ONNX models (`face_detection_yunet_2023mar.onnx` and `face_recognition_sface_2021dec.onnx`) are present in `models/`.
+          required: true
+        - label: I am using Python 3.8 or higher.
+          required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      options:
+        - Windows (Standalone EXE or Python)
+        - macOS
+        - Linux / Ubuntu
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: What exactly happened? What was expected vs. actual behavior?
+      placeholder: e.g. Clustering stops at 90% when processing high-resolution HEIC/JPEG photos...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Flask Backend / CLI Console Logs
+      description: Paste any error traceback or console logs when running `face-sort`.
+      render: shell
+    validations:
+      required: false
