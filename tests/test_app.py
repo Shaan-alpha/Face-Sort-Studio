@@ -147,7 +147,7 @@ class TestRoutes:
         self, app, client, monkeypatch, tmp_path
     ):
         """Successful job creation should queue the background worker with the Flask app."""
-        import backend.app.main as main_module
+        import face_sort.app.main as main_module
 
         created_threads = []
 
@@ -236,7 +236,7 @@ class TestFaceEngineImport:
 
 class TestJobRunner:
     def test_uses_app_config_runtime_paths(self, app, tmp_path, monkeypatch):
-        from backend.app.services import job_runner
+        from face_sort.app.services import job_runner
 
         job_id = "job-config-paths"
         job_dir = Path(app.config["JOBS_DIR"]) / job_id
