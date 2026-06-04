@@ -252,7 +252,9 @@
 
     <script>
         window.FACE_SORT_CONFIG = {
-            publicShareMode: {{ "true" if public_share_mode else "false" }}
+            publicShareMode: {{ "true" if public_share_mode else "false" }},
+            maxUploadMb: {{ max_upload_mb }},
+            maxFiles: {{ max_upload_files }}
         };
     </script>
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>

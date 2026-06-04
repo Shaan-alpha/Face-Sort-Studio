@@ -98,6 +98,8 @@ def create_app(config_overrides=None):
         return render_template(
             "index.html",
             public_share_mode=app.config.get("PUBLIC_SHARE_MODE", False),
+            max_upload_mb=app.config["MAX_CONTENT_LENGTH"] // (1024 * 1024),
+            max_upload_files=app.config["MAX_UPLOAD_FILES"],
         )
 
     # ── Oversized uploads → clean JSON error (the UI consumes JSON) ──

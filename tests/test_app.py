@@ -185,6 +185,98 @@ class TestRoutes:
         assert created_threads[0].started is True
 
 
+# ── Upload limit tests ───────────────────────────────────────
+
+class TestUploadLimits:
+    """Large photo batches must fail with a clear, actionable message — not a
+    browser 'network error' caused by the dev server resetting an over-limit
+    upload mid-stream (Werkzeug's 1000-part default + the byte cap)."""
+
+    def test_config_exposes_file_and_size_limits(self, app):
+        # Local desktop mode advertises generous defaults.
+        assert app.config["MAX_UPLOAD_FILES"] == 5000
+        assert app.config["MAX_CONTENT_LENGTH"] // (1024 * 1024) == 2048
+
+    def test_max_form_parts_covers_advertised_file_budget(self, app):
+        # Werkzeug caps multipart parts at 1000 by default; exceeding it resets
+        # the connection (browser sees 'network error'). The server-side ceiling
+        # must sit at/above the file budget it advertises to the UI.
+        assert app.config["MAX_FORM_PARTS"] >= app.config["MAX_UPLOAD_FILES"]
+        assert app.config["MAX_FORM_PARTS"] > 1000
+
+    def test_accepts_batch_over_werkzeug_default_part_limit(
+        self, app, client, monkeypatch, tmp_path
+    ):
+        """A batch exceeding Werkzeug's 1000-part default must be accepted, not
+        rejected mid-parse (which the browser surfaces as a 'network error')."""
+        import face_sort.app.main as main_module
+
+        class _NoThread:
+            def __init__(self, *a, **k):
+                pass
+
+            def start(self):
+                pass
+
+        monkeypatch.setattr(main_module.threading, "Thread", _NoThread)
+
+        gallery_dir = tmp_path / "gallery"
+        gallery_dir.mkdir()
+
+        # 1100 reference parts — above the historical 1000-part ceiling.
+        refs = [(io.BytesIO(b"fake"), f"ref{i}.jpg") for i in range(1100)]
+        res = client.post(
+            "/api/jobs",
+            data={
+                "gallery_path": str(gallery_dir),
+                "match_mode": "any",
+                "threshold": "0.38",
+                "references": refs,
+            },
+            content_type="multipart/form-data",
+        )
+
+        assert res.status_code != 413
+        assert res.status_code == 202
+
+    def test_index_exposes_limits_to_frontend(self, client):
+        # The UI pre-flights against these before uploading, so they must be
+        # injected into the page for app.js to read.
+        body = client.get("/").get_data(as_text=True)
+        assert "maxUploadMb" in body
+        assert "maxFiles" in body
+
+    def test_file_limit_is_overridable_and_form_parts_tracks_it(self, monkeypatch):
+        # The advertised file budget is env-tunable, and Werkzeug's part ceiling
+        # must follow it (+ headroom) so the override never re-introduces resets.
+        import importlib
+        from face_sort.app import config as config_module
+        monkeypatch.setenv("FACE_SORT_MAX_UPLOAD_FILES", "1234")
+        importlib.reload(config_module)
+        try:
+            assert config_module.Config.MAX_UPLOAD_FILES == 1234
+            assert config_module.Config.MAX_FORM_PARTS == 1234 + 16
+        finally:
+            monkeypatch.undo()
+            importlib.reload(config_module)  # restore env-based defaults
+
+    def test_public_share_mode_uses_tighter_limits(self, monkeypatch):
+        # Public-share mode (env-driven, as in deployment) tightens both the
+        # byte cap and the file count to limit abuse.
+        import importlib
+        from face_sort.app import config as config_module
+        monkeypatch.setenv("FACE_SORT_PUBLIC_SHARE_MODE", "1")
+        monkeypatch.delenv("FACE_SORT_MAX_UPLOAD_MB", raising=False)
+        monkeypatch.delenv("FACE_SORT_MAX_UPLOAD_FILES", raising=False)
+        importlib.reload(config_module)
+        try:
+            assert config_module.Config.MAX_UPLOAD_FILES == 500
+            assert config_module.Config.MAX_CONTENT_LENGTH // (1024 * 1024) == 200
+        finally:
+            monkeypatch.undo()
+            importlib.reload(config_module)  # restore env-based defaults
+
+
 # ── Config tests ─────────────────────────────────────────────
 
 class TestConfig:
