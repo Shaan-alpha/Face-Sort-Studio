@@ -1,26 +1,34 @@
-# Face Sort Studio - EXE Build Script
-# =================================
+# ===================================================================
+# Face Sort Studio - EXE Build Script (PowerShell)
+# ===================================================================
+# Usage:  powershell -ExecutionPolicy Bypass -File .\scripts\build.ps1
+# Builds dist\FaceSortStudio.exe using the project venv created by setup.ps1.
+# ===================================================================
 
-$ProjectDir = Get-Location
-$DistDir = Join-Path $ProjectDir "dist"
+$ErrorActionPreference = "Stop"
+$ProjectDir = Split-Path -Parent $PSScriptRoot
+if (-not $ProjectDir) { $ProjectDir = Get-Location }
+Set-Location $ProjectDir
+
+$DistDir  = Join-Path $ProjectDir "dist"
 $BuildDir = Join-Path $ProjectDir "build"
 
-Write-Host "`n[1/3] Cleaning previous builds..." -ForegroundColor Cyan
-if (Test-Path $DistDir) { Remove-Item -Recurse -Force $DistDir }
+# Prefer the project venv (setup.ps1); fall back to PATH python.
+$venvPython = Join-Path $ProjectDir "venv\Scripts\python.exe"
+if (Test-Path $venvPython) { $py = $venvPython } else { $py = "python" }
+
+Write-Host "`n[1/4] Ensuring app + build dependencies ..." -ForegroundColor Cyan
+# `-e .` guarantees the app's runtime deps (incl. pystray + Pillow for the tray)
+# are present so PyInstaller can bundle them; pyinstaller is the build tool itself.
+& $py -m pip install -e $ProjectDir --quiet
+& $py -m pip install pyinstaller --quiet
+
+Write-Host "`n[2/4] Cleaning previous builds ..." -ForegroundColor Cyan
+if (Test-Path $DistDir)  { Remove-Item -Recurse -Force $DistDir }
 if (Test-Path $BuildDir) { Remove-Item -Recurse -Force $BuildDir }
 
-Write-Host "`n[2/3] Building Standalone EXE..." -ForegroundColor Cyan
-Write-Host "This may take 1-2 minutes depending on your CPU." -ForegroundColor Gray
-
-# PyInstaller Command:
-# --onefile: Bundle into a single EXE
-# --windowed: No console window (optional, but good for GUI apps)
-# --add-data: Include static/templates from face_sort/app
-# --name: Resulting file name
-# --icon: (Optional) if you have one
-# --collect-all: Ensure all submodules and package data are included
-
-pyinstaller --noconfirm --onefile --windowed `
+Write-Host "`n[3/4] Building standalone EXE (1-2 minutes) ..." -ForegroundColor Cyan
+& $py -m PyInstaller --noconfirm --onefile --windowed `
     --name "FaceSortStudio" `
     --add-data "face_sort/app/templates;face_sort/app/templates" `
     --add-data "face_sort/app/static;face_sort/app/static" `
@@ -32,6 +40,6 @@ pyinstaller --noconfirm --onefile --windowed `
     --hidden-import "PIL" `
     run.py
 
-Write-Host "`n[3/3] Build Complete!" -ForegroundColor Green
-Write-Host "Your portable app is located at: $DistDir\FaceSortStudio.exe" -ForegroundColor White
-Write-Host "Note: The first time you run the EXE, it will still download the AI models to 'data/models'." -ForegroundColor Gray
+Write-Host "`n[4/4] Build complete!" -ForegroundColor Green
+Write-Host "Your portable app is at: $DistDir\FaceSortStudio.exe" -ForegroundColor White
+Write-Host "Note: on first launch the EXE downloads the ~37 MB AI models to data\models (one-time)." -ForegroundColor Gray
