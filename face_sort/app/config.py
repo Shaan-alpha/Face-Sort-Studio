@@ -69,5 +69,12 @@ class Config:
     YUNET_MODEL = "face_detection_yunet_2023mar.onnx"
     SFACE_MODEL = "face_recognition_sface_2021dec.onnx"
 
-    # ── Max upload size (50 MB) ──────────────────────────────────
-    MAX_CONTENT_LENGTH = 50 * 1024 * 1024
+    # ── Max upload size ──────────────────────────────────────────
+    # A real photo batch easily exceeds a few-MB cap, and an oversized body
+    # surfaces in the browser as a confusing "network error". Local desktop
+    # use gets a generous cap; public-share mode stays tighter to limit abuse.
+    # Override with FACE_SORT_MAX_UPLOAD_MB (megabytes) if needed.
+    _DEFAULT_MAX_UPLOAD_MB = 200 if PUBLIC_SHARE_MODE else 2048
+    MAX_CONTENT_LENGTH = int(
+        os.environ.get("FACE_SORT_MAX_UPLOAD_MB", _DEFAULT_MAX_UPLOAD_MB)
+    ) * 1024 * 1024
