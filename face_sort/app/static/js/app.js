@@ -9,7 +9,10 @@
 // ═══════════════════════════════════════════════════════════════
 // State
 // ═══════════════════════════════════════════════════════════════
-const APP_CONFIG = window.FACE_SORT_CONFIG || { publicShareMode: false };
+const APP_CONFIG = Object.assign(
+    { publicShareMode: false, maxUploadMb: 2048, maxFiles: 5000 },
+    window.FACE_SORT_CONFIG || {}
+);
 let refFiles = [];
 let galFiles = [];
 let galleryMode = "upload";   // "upload" | "folder"
@@ -192,6 +195,38 @@ document.getElementById("job-form").addEventListener("submit", async (e) => {
         }
     }
 
+    // Pre-flight the upload against the server's limits. Sending an over-limit
+    // batch makes the dev server reset the connection mid-upload, which the
+    // browser reports as a misleading "network error". Catch it here with a
+    // clear, actionable message instead.
+    if (galleryMode === "upload") {
+        const allFiles = [...refFiles, ...galFiles];
+        const folderHint = APP_CONFIG.publicShareMode
+            ? ""
+            : " or use Local Folder mode for large galleries";
+
+        if (allFiles.length > APP_CONFIG.maxFiles) {
+            showToast(
+                `Too many photos at once (${allFiles.length}; limit ${APP_CONFIG.maxFiles}). ` +
+                `Upload fewer${folderHint}.`,
+                "error"
+            );
+            return;
+        }
+
+        const totalBytes = allFiles.reduce((sum, f) => sum + f.size, 0);
+        const maxBytes = APP_CONFIG.maxUploadMb * 1024 * 1024;
+        if (totalBytes > maxBytes) {
+            const totalMb = Math.round(totalBytes / (1024 * 1024));
+            showToast(
+                `This batch is ${totalMb} MB — over the ${APP_CONFIG.maxUploadMb} MB upload limit. ` +
+                `Upload fewer/smaller photos${folderHint}.`,
+                "error"
+            );
+            return;
+        }
+    }
+
     const btn = document.getElementById("submit-btn");
     const textEl = document.getElementById("submit-text");
     const spinnerEl = document.getElementById("submit-spinner");
@@ -213,10 +248,17 @@ document.getElementById("job-form").addEventListener("submit", async (e) => {
 
     try {
         const res = await fetch("/api/jobs", { method: "POST", body: form });
-        const data = await res.json();
+
+        // Parse defensively: an error response may carry an HTML body (e.g. a
+        // raw 413/500 page), and blindly awaiting res.json() would throw and be
+        // misreported below as a "network error".
+        let data = null;
+        try { data = await res.json(); } catch { /* non-JSON body */ }
 
         if (!res.ok) {
-            showToast(data.error || "Something went wrong.", "error");
+            const msg = (data && data.error)
+                || `Upload failed (HTTP ${res.status}). Try fewer/smaller photos.`;
+            showToast(msg, "error");
             return;
         }
 

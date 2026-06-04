@@ -78,3 +78,20 @@ class Config:
     MAX_CONTENT_LENGTH = int(
         os.environ.get("FACE_SORT_MAX_UPLOAD_MB", _DEFAULT_MAX_UPLOAD_MB)
     ) * 1024 * 1024
+
+    # ── Max upload file count ────────────────────────────────────
+    # Werkzeug caps multipart form parts at 1000 by default. A real gallery
+    # easily exceeds that, and when it does the dev server rejects the request
+    # before reading the body — the browser, still uploading, sees the socket
+    # reset and reports a misleading "network error" instead of a clean limit
+    # message. We raise the ceiling, advertise the limit to the UI (so it can
+    # pre-flight with a clear message + a nudge to Local Folder mode for huge
+    # galleries), and keep public-share mode tighter to limit abuse.
+    # Override with FACE_SORT_MAX_UPLOAD_FILES if needed.
+    _DEFAULT_MAX_UPLOAD_FILES = 500 if PUBLIC_SHARE_MODE else 5000
+    MAX_UPLOAD_FILES = int(
+        os.environ.get("FACE_SORT_MAX_UPLOAD_FILES", _DEFAULT_MAX_UPLOAD_FILES)
+    )
+    # Sit just above the advertised file budget (+ headroom for the handful of
+    # non-file form fields) so a valid batch is never reset by Werkzeug.
+    MAX_FORM_PARTS = MAX_UPLOAD_FILES + 16
