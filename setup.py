@@ -7,6 +7,17 @@ with open("VERSION", "r") as f:
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
 
+# Single source of truth for dependencies — keep requirements.txt and the
+# installed package in lockstep so `pip install .` and `pip install -r
+# requirements.txt` resolve the same, tested dependency set.
+with open("requirements.txt", "r", encoding="utf-8") as f:
+    install_requires = []
+    for line in f:
+        # Strip inline comments (pip allows them; PEP 508 specifiers do not).
+        spec = line.split("#", 1)[0].strip()
+        if spec:
+            install_requires.append(spec)
+
 setup(
     name="face-sort-studio",
     version=version,
@@ -17,18 +28,7 @@ setup(
     url="https://github.com/Shaan-alpha/face-sort-studio",
     packages=find_packages(),
     include_package_data=True,
-    install_requires=[
-        "flask>=2.0.0",
-        "flask-sqlalchemy",
-        "opencv-python-headless",
-        "numpy",
-        "pillow",
-        "click",
-        "pystray",
-        "python-multipart",
-        "werkzeug",
-        "sqlalchemy",
-    ],
+    install_requires=install_requires,
     entry_points={
         "console_scripts": [
             "face-sort=face_sort.cli:main",
@@ -39,5 +39,5 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.11",
 )

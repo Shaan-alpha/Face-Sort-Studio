@@ -12,7 +12,7 @@
         {
             "label": "Face Sort Studio: Run",
             "type": "shell",
-            "command": "python",
+            "command": "${workspaceFolder}\\venv\\Scripts\\python.exe",
             "args": ["run.py"],
             "group": "build",
             "presentation": { "reveal": "always", "panel": "new" },
@@ -22,7 +22,7 @@
         {
             "label": "Face Sort Studio: Test",
             "type": "shell",
-            "command": "python",
+            "command": "${workspaceFolder}\\venv\\Scripts\\python.exe",
             "args": ["-m", "pytest", "tests/", "-v"],
             "group": "test",
             "presentation": { "reveal": "always", "panel": "new" }

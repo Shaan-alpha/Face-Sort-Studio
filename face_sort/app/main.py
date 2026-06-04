@@ -44,6 +44,32 @@ def _ensure_runtime_paths(app: Flask) -> None:
     if db_dir:
         os.makedirs(db_dir, exist_ok=True)
 
+def _save_uploaded_images(files, dest_dir, allowed_extensions):
+    """Save uploaded files that are images, with collision-safe names.
+
+    Enforces a server-side extension allow-list (the browser ``accept`` filter
+    is bypassable via the documented API). secure_filename can collapse
+    non-Latin names to '' or strip the extension, so we always prefix a short
+    uuid and re-attach the validated extension — this prevents both silent
+    overwrites of same-named uploads and silent dropping of non-Latin names.
+    Returns the number of valid images saved.
+    """
+    saved = 0
+    for f in files:
+        if not f or not f.filename:
+            continue
+        ext = os.path.splitext(f.filename)[1].lower()
+        if ext not in allowed_extensions:
+            continue  # reject non-image uploads
+        base = secure_filename(f.filename)
+        if not base or os.path.splitext(base)[1].lower() != ext:
+            base = f"image{ext}"
+        fname = f"{uuid.uuid4().hex[:8]}_{base}"
+        f.save(os.path.join(dest_dir, fname))
+        saved += 1
+    return saved
+
+
 # ── Flask app factory ────────────────────────────────────────────
 def create_app(config_overrides=None):
     app = Flask(
@@ -74,6 +100,17 @@ def create_app(config_overrides=None):
             public_share_mode=app.config.get("PUBLIC_SHARE_MODE", False),
         )
 
+    # ── Oversized uploads → clean JSON error (the UI consumes JSON) ──
+    @app.errorhandler(413)
+    def too_large(_e):
+        limit_mb = app.config.get("MAX_CONTENT_LENGTH", 0) // (1024 * 1024)
+        return jsonify({
+            "error": (
+                f"Upload too large (limit {limit_mb} MB total). Upload fewer/"
+                "smaller images at once, or use Local Folder mode for big galleries."
+            )
+        }), 413
+
     # ── API: create a new sorting job ────────────────────────────
     @app.route("/api/jobs", methods=["POST"])
     def create_job():
@@ -84,15 +121,18 @@ def create_app(config_overrides=None):
         os.makedirs(ref_dir, exist_ok=True)
         os.makedirs(gal_dir, exist_ok=True)
 
+        allowed = app.config.get("ALLOWED_EXTENSIONS", Config.ALLOWED_EXTENSIONS)
+        formats = ", ".join(sorted(allowed))
+
         # Save reference photos
         ref_files = request.files.getlist("references")
         if not ref_files or all(f.filename == "" for f in ref_files):
             return jsonify({"error": "At least one reference photo is required."}), 400
 
-        for f in ref_files:
-            if f and f.filename:
-                fname = secure_filename(f.filename)
-                f.save(os.path.join(ref_dir, fname))
+        if _save_uploaded_images(ref_files, ref_dir, allowed) == 0:
+            return jsonify({
+                "error": f"No valid reference images found. Supported formats: {formats}."
+            }), 400
 
         # Gallery source — either uploads or a local folder path
         gallery_path = request.form.get("gallery_path", "").strip()
@@ -116,10 +156,10 @@ def create_app(config_overrides=None):
             return jsonify({"error": "Provide gallery images or a folder path."}), 400
 
         if has_uploads:
-            for g in gallery_files:
-                if g and g.filename:
-                    gname = secure_filename(g.filename)
-                    g.save(os.path.join(gal_dir, gname))
+            if _save_uploaded_images(gallery_files, gal_dir, allowed) == 0:
+                return jsonify({
+                    "error": f"No valid gallery images found. Supported formats: {formats}."
+                }), 400
             gallery_source = gal_dir
         else:
             if not os.path.isdir(gallery_path):
@@ -182,12 +222,19 @@ def create_app(config_overrides=None):
 
         def generate():
             last_pos = 0
+            waited = 0.0
+            max_wait = 3600  # safety cap (seconds) so a stuck job can't loop forever
             while True:
+                # Expire the session's identity map so each iteration re-reads
+                # the row from disk; the background worker commits status in a
+                # separate session, and without this the cached status never
+                # updates and the loop never terminates.
+                db.session.expire_all()
                 job = db.session.get(Job, job_id)
                 if not job:
                     break
                 if os.path.exists(log_path):
-                    with open(log_path, "r") as fh:
+                    with open(log_path, "r", encoding="utf-8") as fh:
                         fh.seek(last_pos)
                         new_lines = fh.read()
                         last_pos = fh.tell()
@@ -197,7 +244,11 @@ def create_app(config_overrides=None):
                 if job.status in ("completed", "failed"):
                     yield f"data: {json.dumps({'status': job.status})}\n\n"
                     break
+                if waited >= max_wait:
+                    yield f"data: {json.dumps({'status': 'timeout'})}\n\n"
+                    break
                 time.sleep(0.5)
+                waited += 0.5
 
         return Response(
             stream_with_context(generate()),
