@@ -44,6 +44,7 @@ Invoke-Checked @(
     '--name', 'FaceSortStudio',
     '--add-data', 'face_sort/app/templates;face_sort/app/templates',
     '--add-data', 'face_sort/app/static;face_sort/app/static',
+    '--add-data', 'VERSION;.',
     '--collect-all', 'face_sort',
     '--hidden-import', 'flask',
     '--hidden-import', 'flask_sqlalchemy',

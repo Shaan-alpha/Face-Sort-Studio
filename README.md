@@ -1,4 +1,4 @@
-# Face Sort Studio v2.1.4
+# Face Sort Studio v2.1.5
 
 [![Sponsor](https://img.shields.io/badge/Sponsor-💖_Support-EC4899)](https://github.com/sponsors/Shaan-alpha)
 
@@ -17,6 +17,18 @@
 Face Sort Studio is a privacy-first tool that scans your photo gallery and automatically organizes images into folders based on the people in them. Using high-performance deep learning models, it detects every face and creates unique identity embeddings to match targets with precision—all while remaining 100% offline.
 
 Everything runs locally on your hardware. No cloud uploads, no API keys, and no data leaves your machine.
+
+---
+
+## ⬇️ Download (Windows)
+
+**[Download FaceSortStudio.exe →](https://github.com/Shaan-alpha/face-sort-studio/releases/latest)**
+
+Portable — no Python, no install. Download, double-click, and the app opens in your browser.
+
+> First launch downloads ~37 MB of AI models (a one-time step). After that, everything runs **100% offline**.
+
+Prefer to run from source or build the EXE yourself? See [Quick Start](#-quick-start-local-setup) and [Standalone EXE](#-standalone-exe-portable) below.
 
 ---
 
@@ -64,7 +76,9 @@ Everything runs locally on your hardware. No cloud uploads, no API keys, and no 
 ---
 
 ## 📦 Standalone EXE (Portable)
-If you want to run the app without installing Python or any libraries, you can build a portable Windows `.exe`:
+The easiest way to run the app without installing Python or any libraries is to **[download the pre-built `FaceSortStudio.exe`](https://github.com/Shaan-alpha/face-sort-studio/releases/latest)** from the latest release.
+
+Prefer to build it yourself?
 1.  Run `.\scripts\build.ps1` in PowerShell.
 2.  Find **`FaceSortStudio.exe`** in the `dist/` folder.
 3.  You can move this EXE anywhere—it's self-contained!
