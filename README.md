@@ -4,6 +4,16 @@
 
 **Local deep-learning photo organization — powered by face recognition.**
 
+<p align="center">
+  <img src="docs/assets/ui-create-light.png" alt="Face Sort Studio — start a sorting job" width="760" />
+</p>
+<p align="center">
+  <img src="docs/assets/ui-create-dark.png" alt="Dark mode" width="380" />
+  <img src="docs/assets/ui-dashboard-light.png" alt="Analytics dashboard" width="380" />
+  <br />
+  <em>Polished, fully offline browser UI — with a built-in dark mode and an analytics dashboard.</em>
+</p>
+
 Face Sort Studio is a privacy-first tool that scans your photo gallery and automatically organizes images into folders based on the people in them. Using high-performance deep learning models, it detects every face and creates unique identity embeddings to match targets with precision—all while remaining 100% offline.
 
 Everything runs locally on your hardware. No cloud uploads, no API keys, and no data leaves your machine.
@@ -63,6 +73,21 @@ If you want to run the app without installing Python or any libraries, you can b
 
 ## 🚀 Quick Start (Local Setup)
 
+**Windows, in three steps** (full setup options are in [Setup](#setup) below):
+
+```powershell
+git clone https://github.com/Shaan-alpha/face-sort-studio.git
+cd face-sort-studio
+powershell -ExecutionPolicy Bypass -File .\scripts\setup.ps1   # creates a venv + downloads models
+powershell -ExecutionPolicy Bypass -File .\scripts\run.ps1     # starts the app + opens your browser
+```
+
+> **First run downloads ~37 MB of AI models** (a one-time step). After that, everything runs fully offline.
+
+**macOS / Linux:** the Flask core is pure Python — see the cross-platform steps in [Setup → Option C](#setup).
+
+---
+
 ## Project Structure
 
 ```
@@ -105,8 +130,7 @@ face-sort-studio/
 │
 └── .vscode/
     ├── tasks.json                  # Setup / Run / Test tasks
-    ├── launch.json                 # Debug profile
-    └── settings.json               # Python interpreter config
+    └── launch.json                 # Debug profile
 ```
 
 ---
@@ -180,7 +204,7 @@ Photos are copied (never moved) into the output folders.
 ## Prerequisites
 
 - **Python 3.11+** — [python.org](https://python.org/downloads)
-- **Windows** — scripts are PowerShell; the core app runs on any OS
+- **Primary support: Windows** — the automation scripts and portable EXE are Windows-only. The Flask core is pure Python and runs on macOS/Linux via the manual steps ([Option C](#setup)); the system-tray + auto-open-browser launcher (`run.py`) is a Windows-desktop convenience, while `face-sort` is the cross-platform headless command.
 - **Tailscale** (optional) — only needed for the public sharing flow
 
 ---
@@ -353,7 +377,6 @@ These are planned or suggested improvements for future versions:
 - **Person renaming** — rename "Person_01" to actual names in the UI
 - **Face bounding box preview** — overlay detected faces on image thumbnails
 - **Batch operations** — re-run a previous job with different settings
-- **Dark mode** — toggle between light and dark themes
 
 ### Medium-Term
 - **TensorFlow integration** — swap OpenCV models for TensorFlow-based detection/recognition for improved accuracy on challenging photos
@@ -377,7 +400,7 @@ These are planned or suggested improvements for future versions:
 Flask's synchronous model is simpler to reason about for a local desktop-style app. Background jobs run in threads. The template engine (Jinja2) is built in. For a single-user local tool, Flask is the right balance of simplicity and power.
 
 **Why OpenCV DNN instead of TensorFlow?**
-The OpenCV models (YuNet + SFace) are tiny ONNX files (~2 MB total) that run on CPU without CUDA. They provide excellent accuracy for face detection and recognition. TensorFlow integration is on the roadmap for users who want to push accuracy further on difficult photos.
+The OpenCV models (YuNet + SFace) are compact ONNX files (~37 MB total, downloaded once on first run) that run on CPU without CUDA. They provide excellent accuracy for face detection and recognition. TensorFlow integration is on the roadmap for users who want to push accuracy further on difficult photos.
 
 **Why SQLite?**
 Zero configuration, no separate database server, single file. Perfect for a local app. The SQLAlchemy ORM means swapping to PostgreSQL or Azure SQL later requires only changing the connection string in `config.py`.

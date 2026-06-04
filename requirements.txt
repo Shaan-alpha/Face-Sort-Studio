@@ -1,16 +1,15 @@
 # ── Core Framework ───────────────────────────────────────────
-flask==3.1.0
-flask-sqlalchemy==3.1.1
-jinja2==3.1.0
-click==8.1.8
+flask>=3.1.3          # 3.1.3 clears CVE-2025-47278 / CVE-2026-27205
+flask-sqlalchemy>=3.1.1
+jinja2>=3.1.6         # 3.1.6 clears the 3.1.x XSS/sandbox CVEs
+click>=8.1.8
 
 # ── Deep Learning & Vision ───────────────────────────────────
-opencv-python-headless==4.11.0.86
-numpy==2.0.2
-pillow==11.1.0
+opencv-python-headless>=4.11.0.86
+numpy>=2.1.3,<2.3     # 2.1.3+ ships Python 3.13 wheels; <2.3 stays in OpenCV 4.11's tested range
+pillow>=11.3.0
 
 # ── Utilities ────────────────────────────────────────────────
-python-multipart==0.0.20
-werkzeug==3.1.3
-sqlalchemy==2.0.38
-pystray==0.19.5
+werkzeug>=3.1.6      # 3.1.6 clears the Windows device-name safe_join DoS chain
+sqlalchemy>=2.0.43
+pystray>=0.19.5

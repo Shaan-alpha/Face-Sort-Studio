@@ -19,8 +19,22 @@ else:
 DATA_DIR = BASE_DIR / "data"
 
 
+def _read_version() -> str:
+    """Read the project version from the VERSION file (single source of truth)."""
+    candidates = [
+        BASE_DIR / "VERSION",
+        Path(__file__).resolve().parent.parent.parent / "VERSION",
+    ]
+    for path in candidates:
+        try:
+            return path.read_text(encoding="utf-8").strip()
+        except OSError:
+            continue
+    return "2.1.4"  # fallback if VERSION file isn't bundled (e.g. some EXE builds)
+
+
 class Config:
-    VERSION = "2.1.1"
+    VERSION = _read_version()
     SECRET_KEY = os.environ.get("SECRET_KEY", "face-sort-studio-dev-key")
     PUBLIC_SHARE_MODE = os.environ.get(
         "FACE_SORT_PUBLIC_SHARE_MODE", ""

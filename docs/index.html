@@ -13,16 +13,22 @@
 <body>
     <div class="page-shell">
         <header class="hero">
-            <p class="eyebrow">v2.1.1 Release</p>
+            <p class="eyebrow">v2.1.4 Release</p>
             <h1>Face Sort Studio</h1>
             <p class="hero-copy">
-                Professional local photo organization. Sort galleries by face with 
+                Professional local photo organization. Sort galleries by face with
                 high-performance deep learning models and a polished browser UI—all 100% offline.
             </p>
             <div class="hero-actions">
-                <a class="button button-primary" href="#setup">Local Setup</a>
+                <a class="button button-primary" href="https://github.com/Shaan-alpha/face-sort-studio">View on GitHub</a>
+                <a class="button button-secondary" href="#setup">Local Setup</a>
                 <a class="button button-secondary" href="#hosting">Hosting Notes</a>
             </div>
+            <img
+                src="./assets/ui-create-light.png"
+                alt="Face Sort Studio browser interface"
+                style="margin-top:2rem;width:100%;max-width:880px;height:auto;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,0.18);"
+            />
         </header>
 
         <main>
@@ -76,7 +82,7 @@
             <section id="setup" class="card card-wide">
                 <h2>Run It Locally</h2>
                 <ol>
-                    <li>Install Python 3.13 or newer.</li>
+                    <li>Install Python 3.11 or newer.</li>
                     <li>Install dependencies with <code>python -m pip install -r requirements.txt</code>.</li>
                     <li>Create the data folders or run <code>scripts/setup.ps1</code>.</li>
                     <li>Start the app with <code>python run.py</code> or <code>scripts/run.ps1</code>.</li>

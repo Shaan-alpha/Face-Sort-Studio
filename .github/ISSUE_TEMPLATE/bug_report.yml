@@ -16,7 +16,7 @@ body:
       options:
         - label: I have verified that OpenCV ONNX models (`face_detection_yunet_2023mar.onnx` and `face_recognition_sface_2021dec.onnx`) are present in `models/`.
           required: true
-        - label: I am using Python 3.8 or higher.
+        - label: I am using Python 3.11 or higher.
           required: true
   - type: dropdown
     id: os

@@ -1,11 +1,11 @@
-# FACE SORT STUDIO - SETUP GUIDE (v2.1.0)
+# FACE SORT STUDIO - SETUP GUIDE
 ========================================
 
 Follow these steps to get your local AI photo sorter running in minutes.
 
 ### 1. DOWNLOAD & INSTALL PREREQUISITES
 ---------------------------------------
-*   **Python 3.11 or 3.12**: Download from https://www.python.org/downloads/
+*   **Python 3.11 or newer**: Download from https://www.python.org/downloads/
     *   IMPORTANT: During installation, check the box that says "Add Python to PATH".
 *   **Git (Optional)**: Download from https://git-scm.com/ to keep the code updated.
 
@@ -23,14 +23,14 @@ If you are on Windows:
 ---------------------------
 Once setup is complete, you can start the app in two ways:
 
-**Method A: Global Command (Best)**
-1. Open a terminal (cmd or powershell).
-2. Type `face-sort` and press Enter.
-3. Open your browser to http://127.0.0.1:8000
-
-**Method B: Desktop Script**
+**Method A: Desktop App (Best — system tray + auto-opens browser)**
 1. Run `scripts\run.ps1` with PowerShell.
-2. It will start the server and open your browser automatically.
+2. It starts the server, opens your browser automatically, and shows a system-tray icon.
+
+**Method B: Headless / Server Command**
+1. Open a terminal (cmd or powershell).
+2. Type `face-sort` and press Enter. (No tray icon and the browser does NOT auto-open in this mode.)
+3. Open your browser to http://127.0.0.1:8000
 
 **Method C: Standalone EXE (Portable)**
 1. Go to the `dist/` folder.
@@ -42,7 +42,7 @@ Once setup is complete, you can start the app in two ways:
 *   **"Python not found"**: Ensure you restarted your terminal after installing Python.
 *   **"Execution Policy Error"**: If scripts don't run, open PowerShell as Admin and run: 
     `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
-*   **Model Download Failed**: Ensure you have an active internet connection for the first run. The app needs to download ~10MB of AI models.
+*   **Model Download Failed**: Ensure you have an active internet connection for the first run. The app downloads ~37 MB of AI models (a one-time step; mostly the SFace recognition model). If a download is interrupted, just relaunch — partial files are re-downloaded automatically.
 
 ---
 Enjoy your organized photos! 

@@ -1,0 +1,12 @@
+{
+  "name": "face-sort-studio-ui",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Build tooling for the Face Sort Studio UI (vendored Tailwind CSS — no CDN, fully offline).",
+  "scripts": {
+    "build:css": "tailwindcss -c tailwind.config.js -i face_sort/app/static/css/tailwind.input.css -o face_sort/app/static/css/tailwind.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}
