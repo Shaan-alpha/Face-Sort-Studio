@@ -4,6 +4,16 @@
 
 **Local deep-learning photo organization — powered by face recognition.**
 
+<p align="center">
+  <img src="docs/assets/ui-create-light.png" alt="Face Sort Studio — start a sorting job" width="760" />
+</p>
+<p align="center">
+  <img src="docs/assets/ui-create-dark.png" alt="Dark mode" width="380" />
+  <img src="docs/assets/ui-dashboard-light.png" alt="Analytics dashboard" width="380" />
+  <br />
+  <em>Polished, fully offline browser UI — with a built-in dark mode and an analytics dashboard.</em>
+</p>
+
 Face Sort Studio is a privacy-first tool that scans your photo gallery and automatically organizes images into folders based on the people in them. Using high-performance deep learning models, it detects every face and creates unique identity embeddings to match targets with precision—all while remaining 100% offline.
 
 Everything runs locally on your hardware. No cloud uploads, no API keys, and no data leaves your machine.
