@@ -21,7 +21,13 @@ DATA_DIR = BASE_DIR / "data"
 
 def _read_version() -> str:
     """Read the project version from the VERSION file (single source of truth)."""
-    candidates = [
+    candidates = []
+    # PyInstaller extracts bundled data here; check it first so the frozen EXE
+    # reports the version it was actually built from, not the fallback.
+    meipass = getattr(sys, "_MEIPASS", None)
+    if meipass:
+        candidates.append(Path(meipass) / "VERSION")
+    candidates += [
         BASE_DIR / "VERSION",
         Path(__file__).resolve().parent.parent.parent / "VERSION",
     ]
@@ -30,7 +36,7 @@ def _read_version() -> str:
             return path.read_text(encoding="utf-8").strip()
         except OSError:
             continue
-    return "2.1.4"  # fallback if VERSION file isn't bundled (e.g. some EXE builds)
+    return "2.1.5"  # fallback if VERSION file isn't bundled (e.g. some EXE builds)
 
 
 class Config:

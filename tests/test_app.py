@@ -287,6 +287,19 @@ class TestConfig:
             assert ".jpg" in exts
             assert ".png" in exts
 
+    def test_read_version_reads_bundled_version_when_frozen(
+        self, tmp_path, monkeypatch
+    ):
+        """The packaged EXE must report the real version, not the hardcoded
+        fallback. PyInstaller extracts bundled data to sys._MEIPASS, so the
+        version lookup has to check there when frozen."""
+        from face_sort.app import config as config_module
+        (tmp_path / "VERSION").write_text("9.9.9", encoding="utf-8")
+        monkeypatch.setattr(
+            config_module.sys, "_MEIPASS", str(tmp_path), raising=False
+        )
+        assert config_module._read_version() == "9.9.9"
+
     def test_data_dirs_configured(self, app):
         assert app.config.get("JOBS_DIR")
         assert app.config.get("OUTPUTS_DIR")
