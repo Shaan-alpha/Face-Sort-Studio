@@ -428,7 +428,7 @@ Server-Sent Events are simpler (one-directional: server → client), work over s
 
 We welcome contributions, bug reports, and feature requests! Check out our new interactive issue forms if you have ideas for new clustering algorithms or export formats. If you find Face Sort Studio helpful, consider giving it a star or sponsoring the project!
 
-[![Star History Chart](https://api.star-history.com/svg?repos=Shaan-alpha/Face-Sort-Studio&type=Date)](https://star-history.com/#Shaan-alpha/Face-Sort-Studio&Date)
+[![GitHub stars](https://img.shields.io/github/stars/Shaan-alpha/Face-Sort-Studio?style=for-the-badge&logo=github)](https://github.com/Shaan-alpha/Face-Sort-Studio/stargazers) [![Star History](https://img.shields.io/badge/%F0%9F%93%88_Star_History-view-1F6FEB?style=for-the-badge)](https://star-history.com/#Shaan-alpha/Face-Sort-Studio&Date)
 
 ---
 
