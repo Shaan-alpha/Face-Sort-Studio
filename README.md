@@ -186,6 +186,59 @@ See [docs/DEPLOY_FREE.md](docs/DEPLOY_FREE.md) for:
 
 ## How Face Matching Works
 
+```mermaid
+flowchart TD
+    REF(["<b>Reference photos</b><br/>the people you want to find"])
+    GAL(["<b>Gallery</b><br/>uploaded images, or a local folder path"])
+
+    subgraph S1 ["Stage 1 — Detection · YuNet"]
+        D["lightweight DNN → bounding boxes<br/>+ facial landmarks<br/><i>multiple faces per image, any scale</i>"]
+    end
+
+    subgraph S2 ["Stage 2 — Embedding · SFace"]
+        E["align on landmarks → <b>128-d normalised vector</b><br/><i>same person ⇒ close together</i>"]
+    end
+
+    subgraph S3 ["Stage 3 — Target clustering"]
+        C["cluster reference faces by similarity<br/><i>three photos of one person<br/>become one target, not three</i>"]
+    end
+
+    subgraph S4 ["Stage 4 — Gallery scan"]
+        M["every gallery face vs every target<br/><b>cosine similarity</b> vs your threshold<br/>default 0.38, tunable 0.20–0.70"]
+    end
+
+    MODE{"<b>Match mode</b>"}
+    ANY["<b>Any</b><br/>matched if <i>any</i><br/>target appears"]
+    ALL["<b>All</b><br/>matched only if <i>every</i><br/>target appears"]
+
+    OUT["<b>Stage 5 — Sorting</b><br/>photos are <b>copied</b>, never moved<br/>matched · partial · unmatched"]
+
+    SSE["<b>Server-Sent Events</b><br/>live progress to the browser UI"]
+    DB[("<b>SQLite</b><br/>jobs — one row per run<br/>job_results — one row per image")]
+
+    REF --> D
+    GAL --> D
+    D --> E
+    E -->|"reference faces"| C
+    E -->|"gallery faces"| M
+    C --> M
+    M --> MODE
+    MODE --> ANY --> OUT
+    MODE --> ALL --> OUT
+    M -.-> SSE
+    OUT --> DB
+
+    classDef net fill:#312e81,stroke:#818cf8,stroke-width:2px,color:#e2e8f0
+    classDef out fill:#064e3b,stroke:#10b981,stroke-width:2px,color:#d1fae5
+    classDef store fill:#1e293b,stroke:#475569,stroke-width:1.5px,color:#cbd5e1
+    class D,E net
+    class OUT out
+    class DB,SSE store
+```
+
+Everything in that diagram runs on your hardware. No cloud uploads, no API keys; the only
+network call the app ever makes is the one-time ~37 MB model download on first launch.
+
 The pipeline runs in five stages:
 
 ### Stage 1: Face Detection (YuNet)
@@ -208,8 +261,8 @@ Each gallery image is scanned. Every face found is compared against all target e
 
 Based on your match mode:
 
-- **Any mode** (a photo is "matched" if **any** target person appears in it.
-- **All mode**) a photo is "matched" only if **every** target person appears. Photos with some (but not all) targets go into "partial".
+- **Any mode** — a photo is "matched" if **any** target person appears in it.
+- **All mode** — a photo is "matched" only if **every** target person appears. Photos with some (but not all) targets go into "partial".
 
 Photos are copied (never moved) into the output folders.
 
@@ -217,8 +270,8 @@ Photos are copied (never moved) into the output folders.
 
 ## Prerequisites
 
-- **Python 3.11+** ([python.org](https://python.org/downloads)
-- **Primary support: Windows**) the automation scripts and portable EXE are Windows-only. The Flask core is pure Python and runs on macOS/Linux via the manual steps ([Option C](#setup)); the system-tray + auto-open-browser launcher (`run.py`) is a Windows-desktop convenience, while `face-sort` is the cross-platform headless command.
+- **Python 3.11+** ([python.org](https://python.org/downloads))
+- **Primary support: Windows** — the automation scripts and portable EXE are Windows-only. The Flask core is pure Python and runs on macOS/Linux via the manual steps ([Option C](#setup)); the system-tray + auto-open-browser launcher (`run.py`) is a Windows-desktop convenience, while `face-sort` is the cross-platform headless command.
 - **Tailscale** (optional), only needed for the public sharing flow
 
 ---
@@ -275,14 +328,14 @@ Click or drag-and-drop one or more photos of the people you want to find. These 
 
 Choose one of two methods:
 
-- **Upload Photos** (drag-and-drop or select gallery images directly in the browser.
-- **Local Folder**) paste the absolute path to a folder on your computer (e.g. `C:\Users\You\Pictures\Vacation`).
+- **Upload Photos** — drag-and-drop or select gallery images directly in the browser.
+- **Local Folder** — paste the absolute path to a folder on your computer (e.g. `C:\Users\You\Pictures\Vacation`).
 
 ### Step 3: Configure Settings
 
 - **Match Mode**
-  - `Any Person` (photo matches if at least one target appears.
-  - `All People`) photo matches only if every target appears.
+  - `Any Person` — photo matches if at least one target appears.
+  - `All People` — photo matches only if every target appears.
 - **Confidence Threshold** (0.20 – 0.70)
   - Higher = stricter matching (fewer false positives, may miss some real matches).
   - Lower = more permissive (catches more real matches, may include some false positives).
@@ -348,8 +401,8 @@ SQLite database at `data/database/face_sort_studio.db`.
 
 Three tables:
 
-- **jobs** (one row per sorting run (status, settings, stats, timestamps)
-- **job_results**) one row per gallery image (category, faces detected, matched targets)
+- **jobs** — one row per sorting run (status, settings, stats, timestamps)
+- **job_results** — one row per gallery image (category, faces detected, matched targets)
 - **target_faces**: one row per discovered target person (label, source file, embedding hash)
 
 The schema is managed by SQLAlchemy and auto-created on first run.
@@ -388,22 +441,22 @@ Tests cover: route availability, empty-state responses, config validation, and i
 These are planned or suggested improvements for future versions:
 
 ### Near-Term
-- **Person renaming** (rename "Person_01" to actual names in the UI
-- **Face bounding box preview**) overlay detected faces on image thumbnails
+- **Person renaming** — rename "Person_01" to actual names in the UI
+- **Face bounding box preview** — overlay detected faces on image thumbnails
 - **Batch operations**: re-run a previous job with different settings
 
 ### Medium-Term
-- **TensorFlow integration** (swap OpenCV models for TensorFlow-based detection/recognition for improved accuracy on challenging photos
-- **Azure Blob Storage**) optionally store outputs in Azure instead of local disk
-- **Azure SQL Database** (swap SQLite for Azure SQL for multi-user deployments
-- **Power BI connector**) export analytics data for Power BI dashboards
+- **TensorFlow integration** — swap OpenCV models for TensorFlow-based detection/recognition for improved accuracy on challenging photos
+- **Azure Blob Storage** — optionally store outputs in Azure instead of local disk
+- **Azure SQL Database** — swap SQLite for Azure SQL for multi-user deployments
+- **Power BI connector** — export analytics data for Power BI dashboards
 - **WebSocket progress**: replace SSE with WebSockets for bidirectional communication
 
 ### Long-Term
-- **GPU acceleration** (CUDA/DirectML support for faster processing of large galleries
-- **Multi-user mode**) authentication and per-user job isolation
-- **REST API auth** (API key or OAuth for programmatic access
-- **Docker container**) one-command deployment
+- **GPU acceleration** — CUDA/DirectML support for faster processing of large galleries
+- **Multi-user mode** — authentication and per-user job isolation
+- **REST API auth** — API key or OAuth for programmatic access
+- **Docker container** — one-command deployment
 - **Electron wrapper**: native desktop app packaging
 
 ---
