@@ -378,6 +378,7 @@ When the Flask backend is running, these endpoints are available:
 | `GET` | `/api/jobs/<id>` | Get status and stats for one job |
 | `GET` | `/api/jobs/<id>/stream` | SSE stream of real-time progress |
 | `GET` | `/api/jobs/<id>/report` | Download the full JSON report |
+| `GET` | `/outputs/<path>` | Serves a file from a job's output folder (sorted photos, zips) |
 | `DELETE` | `/api/jobs/<id>` | Delete a job and its files |
 | `GET` | `/api/analytics` | Dashboard summary statistics |
 
